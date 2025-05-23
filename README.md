@@ -1,171 +1,79 @@
-#  Godot In-Game Console Plugin
+# RuntimeConsole 插件（Godot 游戏内控制台）
 
-## Overview
-This plugin provides an in-game console for debugging and executing commands during runtime in Godot. It allows developers to quickly test commands and retrieve debug information without modifying the game code.
-
-## Features
-- Open console with `~` key (configurable in Godot editor).
-- Execute commands by typing in the console and pressing `Enter`.
-- Navigate through command history using `↑` and `↓` keys.
-- Print messages, warnings, and errors in a formatted way.
-- Clear console output.
-- Easily extendable with custom commands.
-
-## Installation
-1. Copy the all files into your Godot project’s `addons/InGameConsole` directory.
-2. Enable the plugin in `Project Settings > Plugins`.
-
-## Usage
-- Press `~` to open/close the console.
-- Type commands and press `Enter` to execute.
-- Use `clear` command to clear the console.
-
-### Example Commands
-```text
-ExampleCommand           # Prints a test message
-ExampleCommand2 5        # Calculates the square of 5
-ClearConsole             # Clears the console output
-```
-
-## Extending the Console
-To add custom commands, modify `ConsoleCommands.cs` and create new public methods. 
-Each command method:
-- Must have a single parameter of type `Godot.Collections.Array`.
-- Should handle exceptions internally.
-
-Example:
-```csharp
-public void Greet(Godot.Collections.Array args)
-{
-    if (args.Count < 1)
-    {
-        GameConsole.PrintNoFormattedErrorMessage("Usage: Greet <name>");
-        return;
-    }
-    GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
-}
-```
-
-### Example of custom commands in ConsoleCommands.cs:
-
-```csharp
-    public static void GivePlayerItem(Godot.Collections.Array args)
-    {
-        try
-        {
-            uint itemId = args[0].AsUInt32();
-            int itemQuantity = args[1].AsInt32();
-            if (ItemManager.AddItem(itemId, itemQuantity, true))
-                GameConsole.PrintNoFormattedMessage($"{itemQuantity} {itemId} given to player inventory!");
-            else
-                throw new ArgumentException();
-        }
-        catch (Exception)
-        {
-            GameConsole.PrintNoFormattedErrorMessage("Invalid arguments! Need to specify valid item name and quantity!");
-        }
-    }
-
-    public static void DB(Godot.Collections.Array _)
-    {
-        GameConsole.PrintNoFormattedMessage("Database follow below:");
-        GameConsole.PrintNoFormattedMessage(
-                JsonConvert.SerializeObject(
-                    new Dictionary<string, object>()
-                    {
-                        ["ItemDB"] = GameDB.ItemDB.Values.Select(x => x.ToJson()),
-                        ["UpgradeDB"] = GameDB.UpgradeDB.Values.Select(x => x.ToJson()),
-                        ["ChallengeDB"] = GameDB.ChallengeDB.Values.Select(x => x.ToJson())
-                    },
-                    Formatting.Indented
-                )
-            );
-    }
-```
-
----
-
-# Godot 游戏内控制台
+**[简体中文](README.md) | [English](README_en.md)**
 
 ## 概述
-此插件为 Godot 提供了一个游戏内控制台，允许在运行时执行命令和调试，方便开发者快速测试命令并获取调试信息。
+RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，允许开发者在游戏运行中执行命令、查看日志，并通过对象检查器实时调试场景中的节点和数据结构，为开发与测试带来极大便利
 
 ## 功能
-- 通过 `~` 键打开/关闭控制台（可在 Godot 编辑器中修改）。
-- 在控制台输入命令并按 `Enter` 执行。
-- 使用 `↑` 和 `↓` 键浏览历史命令。
-- 格式化输出普通信息、警告和错误。
-- 清空控制台。
-- 轻松扩展自定义命令。
+
+- 使用 `~` 键打开/关闭控制台。
+
+- Object Inspector（对象检查器）
+    
+    * 一键显示游戏中的所有节点及其公共实例字段/属性。
+    
+    * 支持递归对象结构展示，包含字段、属性、列表等复合数据类型。
+    
+    * 支持搜索关键字并高亮匹配项，轻松定位目标对象。
+    
+    * 支持自定义显示行为：
+    
+        * [`[Inspectable]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L340) 自定义字段名\显示该非公共、静态成员。
+
+        * [`[InspectableObject]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L351) 包括非公共、静态成员。
+
+        * [`[HiddenInInspector]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L361) 隐藏特定字段。
+        
+        * [`[HideInObjectTree]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L366) 从检查器中排除。
+
+- Log & Command Console（日志命令控制台）
+
+    * 实时查看运行时日志（Info / Warning / Error）
+
+    * 执行调试命令
+
+## 环境要求
+
+- [Godot .NET 4.4+](https://godotengine.org/download/windows/)
 
 ## 安装
-1. 将所有文件复制到 Godot 项目的 `addons/InGameConsole` 目录。
+
+1. 下载`Release`版本并解压到项目中。
+
 2. 在 `Project Settings > Plugins` 中启用插件。
 
-## 使用方法
-- 按 `~` 键打开/关闭控制台。
-- 输入命令后按 `Enter` 执行。
-- 使用 `clear` 命令清空控制台。
 
-### 示例命令
-```text
-ExampleCommand           # 打印测试信息
-ExampleCommand2 5        # 计算 5 的平方
-ClearConsole             # 清空控制台输出
-```
+## 添加自定义命令
 
-## 扩展控制台
-要添加自定义命令，可修改 `ConsoleCommands.cs` 并创建新的 `public` 方法。
+**未来版本可能更改以下添加自定义命令的方法**
+
+要添加自定义命令，可修改 `ConsoleCommands.cs` 创建新的方法。
 每个命令方法：
 - 必须接收 `Godot.Collections.Array` 类型的参数。
 - 需要自行处理异常。
 
 示例：
 ```csharp
-public void Greet(Godot.Collections.Array args)
+private void Greet(Godot.Collections.Array args)
 {
     if (args.Count < 1)
     {
-        GameConsole.PrintNoFormattedErrorMessage("Usage: Greet <name>");
+        Console.GameConsole.PrintNoFormattedErrorMessage("Usage: Greet <name>");
         return;
     }
-    GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
+    Console.GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
 }
 ```
 
-### 在ConsoleCommands.cs自定义命令示例:
+详见[`ConsoleCommands.cs`](/ConsoleCommands.cs)
 
-```csharp
-    public static void GivePlayerItem(Godot.Collections.Array args)
-    {
-        try
-        {
-            uint itemId = args[0].AsUInt32();
-            int itemQuantity = args[1].AsInt32();
-            if (ItemManager.AddItem(itemId, itemQuantity, true))
-                GameConsole.PrintNoFormattedMessage($"{itemQuantity} {itemId} given to player inventory!");
-            else
-                throw new ArgumentException();
-        }
-        catch (Exception)
-        {
-            GameConsole.PrintNoFormattedErrorMessage("Invalid arguments! Need to specify valid item name and quantity!");
-        }
-    }
+## 注意事项
 
-    public static void DB(Godot.Collections.Array _)
-    {
-        GameConsole.PrintNoFormattedMessage("Database follow below:");
-        GameConsole.PrintNoFormattedMessage(
-                JsonConvert.SerializeObject(
-                    new Dictionary<string, object>()
-                    {
-                        ["ItemDB"] = GameDB.ItemDB.Values.Select(x => x.ToJson()),
-                        ["UpgradeDB"] = GameDB.UpgradeDB.Values.Select(x => x.ToJson()),
-                        ["ChallengeDB"] = GameDB.ChallengeDB.Values.Select(x => x.ToJson())
-                    },
-                    Formatting.Indented
-                )
-            );
-    }
-```
+- 暂不支持 GDScript 对象及其成员结构展示
+
+- 自定义命令机制将在未来版本中优化升级
+
+## 许可证
+
+[`MIT`](https://mit-license.org/) License
