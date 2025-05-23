@@ -2,6 +2,8 @@
 
 **[简体中文](README.md) | [English](README_en.md)**
 
+<img src="RuntimeConsoleIcon.png" width="15%">
+
 ## Overview
 RuntimeConsole is a runtime console plugin for Godot .NET 4.4+ that allows developers to execute commands, view logs, and debug scene nodes and data structures in real-time during gameplay, providing great convenience for development and testing.
 

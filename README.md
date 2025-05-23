@@ -2,6 +2,8 @@
 
 **[简体中文](README.md) | [English](README_en.md)**
 
+<img src="RuntimeConsoleIcon.png" width="15%">
+
 ## 概述
 RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，允许开发者在游戏运行中执行命令、查看日志，并通过对象检查器实时调试场景中的节点和数据结构，为开发与测试带来极大便利
 
