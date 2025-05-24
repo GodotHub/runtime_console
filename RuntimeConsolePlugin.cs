@@ -30,7 +30,7 @@ using Godot;
 namespace RuntimeConsole;
 
 [Tool]
-public partial class RuntimeConsolePugin : EditorPlugin
+public partial class RuntimeConsolePlugin : EditorPlugin
 {
     public override void _EnterTree()
     {
