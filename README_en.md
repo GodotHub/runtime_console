@@ -65,9 +65,9 @@ private void Greet(Godot.Collections.Array args)
     }
     Console.GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
 }
+```
 
 See [`ConsoleCommands.cs`](/ConsoleCommands.cs) for details.
-```
 
 ## Notes
 
