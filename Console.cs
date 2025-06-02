@@ -6,11 +6,27 @@ namespace RuntimeConsole;
 [HideInObjectTree]
 public partial class Console : Node
 {
+    public record class InspectorSetting
+    {
+        /// <summary>
+        /// 是否展示 GDScript 中枚举属性的名称（如 "Error.OK"），否则仅显示枚举的数值（如 0）。
+        /// <br/>
+        /// 启用后将遍历 GodotSharp 中所有枚举类型以匹配内置枚举名，
+        /// 对性能影响极小，但在极端情况下可能稍微增加初始化时间。
+        /// </summary>
+        public bool ShowGDScriptObjectProperties { get; init; } = true;
+        /// <summary>
+        /// 是否在检查器中显示GDScript对象的属性
+        /// </summary>
+        public bool ShowGDScriptEnumName { get; init; } = false;
+    }
+
     public static Console GameConsole { get; private set; }
     private Button _openConsoleButton;
     private HBoxContainer _menu;
     private CanvasLayer _canvasLayer;
     private LogCommandWindow _logWindow;
+    private ObjectInspectorWindow _inspector;
     private readonly Dictionary<string, Button> _buttons = []; // 按钮名称 -> 按钮
     private readonly Dictionary<string, Window> _windows = []; // 窗口名称 -> 窗口
 
@@ -45,6 +61,10 @@ public partial class Console : Node
                 {
                     _logWindow = log;
                 }
+                if (window is ObjectInspectorWindow window1)
+                {
+                    _inspector = window1;
+                }
 
                 b.Pressed += () => window.Visible = !window.Visible;
             }
@@ -72,6 +92,29 @@ public partial class Console : Node
             }
             _canvasLayer.Visible = !_canvasLayer.Visible;
         }
+    }
+
+    /// <summary>
+    /// 配置对象检查器
+    /// </summary>
+    /// <param name="setting">一个检查器设置实例</param>
+    public void SettingInspector(InspectorSetting setting)
+    {
+        _inspector.ShowGDScriptEnumName = setting.ShowGDScriptEnumName;
+        _inspector.ShowGDScriptObjectProperties = setting.ShowGDScriptObjectProperties;
+    }
+
+    /// <summary>
+    /// 获取当前的对象检查器配置
+    /// </summary>
+    /// <returns>返回一个检查器设置实例</returns>
+    public InspectorSetting GetCurrentInspectorSetting()
+    {
+        return new()
+        {
+            ShowGDScriptEnumName = _inspector.ShowGDScriptEnumName,
+            ShowGDScriptObjectProperties = _inspector.ShowGDScriptObjectProperties
+        };
     }
 
     /// <summary>

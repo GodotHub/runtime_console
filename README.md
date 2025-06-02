@@ -12,6 +12,8 @@ RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，
 - 使用 `~` 键打开/关闭控制台。
 
 - Object Inspector（对象检查器）
+
+    * GDScript用户脚本属性显示支持
     
     * 一键显示游戏中的所有节点及其公共实例字段/属性。
     
@@ -71,8 +73,6 @@ private void Greet(Godot.Collections.Array args)
 详见[`ConsoleCommands.cs`](/ConsoleCommands.cs)
 
 ## 注意事项
-
-- 暂不支持 GDScript 对象及其成员结构展示
 
 - 自定义命令机制将在未来版本中优化升级
 

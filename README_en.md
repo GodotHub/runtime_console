@@ -13,6 +13,8 @@ RuntimeConsole is a runtime console plugin for Godot .NET 4.4+ that allows devel
 
 - Object Inspector
     
+    * GDScript user script properties display support
+
     * One-click display of all nodes in the game and their public instance fields/properties.
     
     * Supports recursive object structure display, including fields, properties, lists, and other composite data types.
@@ -70,8 +72,6 @@ private void Greet(Godot.Collections.Array args)
 See [`ConsoleCommands.cs`](/ConsoleCommands.cs) for details.
 
 ## Notes
-
-- Currently doesn't support GDScript objects and their member structure display
 
 - Custom command mechanism will be optimized in future versions
 
