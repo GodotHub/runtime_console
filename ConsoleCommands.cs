@@ -31,8 +31,4 @@ public partial class ConsoleCommands : Node
         Command methods cannot be added by inheriting from this class        
         命令方法不能通过继承该类添加
     */
-    private void Example(Godot.Collections.Array args)
-    {
-        Console.GameConsole.PrintNoFormattedMessage("Example command executed with arguments:", args);
-    }
 }

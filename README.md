@@ -9,33 +9,25 @@ RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，
 
 ## 功能
 
-- 使用 `~` 键打开/关闭控制台。
+运行时查看日志
 
-- Object Inspector（对象检查器）
+运行时查看对象属性
 
-    * GDScript用户脚本属性显示支持
-    
-    * 一键显示游戏中的所有节点及其公共实例字段/属性。
-    
-    * 支持递归对象结构展示，包含字段、属性、列表等复合数据类型。
-    
-    * 支持搜索关键字并高亮匹配项，轻松定位目标对象。
-    
-    * 支持自定义显示行为：
-    
-        * [`[Inspectable]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L340) 自定义字段名\显示该非公共、静态成员。
+运行时执行命令
 
-        * [`[InspectableObject]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L351) 包括非公共、静态成员。
+自由扩展控制台功能窗口
 
-        * [`[HiddenInInspector]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L361) 隐藏特定字段。
-        
-        * [`[HideInObjectTree]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L366) 从检查器中排除。
+## 路线图
 
-- Log & Command Console（日志命令控制台）
+- [x] 自由拓展控制台功能窗口，支持用户添加自定义功能窗口
 
-    * 实时查看运行时日志（Info / Warning / Error）
+- [ ] 更改日志窗口，支持日志类别筛选
 
-    * 执行调试命令
+- [ ] 更改日志窗口命令功能自定义方式
+
+- [ ] 更改对象检查器窗口UI，支持运行时编辑属性，调用方法
+
+- [ ] 添加运行时脚本编辑器，支持运行时添加或更改对象的脚本(仅限GDScript)
 
 ## 环境要求
 
@@ -71,6 +63,18 @@ private void Greet(Godot.Collections.Array args)
 ```
 
 详见[`ConsoleCommands.cs`](/ConsoleCommands.cs)
+
+## 添加自定义控制台窗口
+
+1. 新建一个场景，并为该场景附加脚本，该场景脚本必须继承自`Window`，场景根节点必须是`Window`，支持使用`GDScript`编写脚本
+
+2. 实现功能
+
+3. 在插件的`Console Windows`配置界面，点击`Add Window`按钮，填写窗口的键，并选择场景，然后启用
+
+4. 点击`Save`按钮，保存配置
+
+5. 重新加载当前项目
 
 ## 注意事项
 

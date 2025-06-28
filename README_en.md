@@ -9,33 +9,25 @@ RuntimeConsole is a runtime console plugin for Godot .NET 4.4+ that allows devel
 
 ## Features
 
-- Use the `~` key to toggle the console.
+View logs at runtime
 
-- Object Inspector
-    
-    * GDScript user script properties display support
+Inspect object properties at runtime
 
-    * One-click display of all nodes in the game and their public instance fields/properties.
-    
-    * Supports recursive object structure display, including fields, properties, lists, and other composite data types.
-    
-    * Supports keyword search with highlighted matches for easy target object location.
-    
-    * Supports custom display behavior:
-    
-        * [`[Inspectable]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L340) Custom field name \ display non-public or static members.
+Execute commands at runtime
 
-        * [`[InspectableObject]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L351) Include non-public and static members.
+Freely extend console feature windows
 
-        * [`[HiddenInInspector]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L361) Hide specific fields or properties.
-        
-        * [`[HideInObjectTree]`](/ObjectInspectorWindow/ObjectInspectorWindow.cs/#L366) Exclude the class from inspector.
+## Roadmap
 
-- Log & Command Console
+- [x] Freely extend console feature windows, support for adding custom feature windows
 
-    * View runtime logs in real-time (Info/Warning/Error)
+- [ ] Improve log window, support log category filtering
 
-    * Execute debug commands
+- [ ] Improve log window command customization
+
+- [ ] Improve object inspector UI, support editing properties and calling methods at runtime
+
+- [ ] Add runtime script editor, support adding or modifying object scripts at runtime (GDScript only)
 
 ## Requirements
 
@@ -70,6 +62,19 @@ private void Greet(Godot.Collections.Array args)
 ```
 
 See [`ConsoleCommands.cs`](/ConsoleCommands.cs) for details.
+
+## Add Custom Console Window
+
+1. Create a new scene and attach a script to it. The script must inherit from `Window`, and the root node of the scene must be `Window`. GDScript is supported.
+
+2. Implement your desired functionality.
+
+3. In the plugin's `Console Windows` configuration interface, click the `Add Window` button, enter the window key, select the scene, and enable it.
+
+4. Click the `Save` button to save the configuration.
+
+5. Reload the current project.
+
 
 ## Notes
 
