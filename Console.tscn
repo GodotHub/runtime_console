@@ -27,5 +27,4 @@ anchor_bottom = 1.0
 offset_top = -38.0
 grow_horizontal = 2
 grow_vertical = 0
-size_flags_horizontal = 3
-size_flags_vertical = 3
+alignment = 1

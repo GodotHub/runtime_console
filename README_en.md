@@ -21,7 +21,7 @@ Freely extend console feature windows
 
 - [x] Freely extend console feature windows, support for adding custom feature windows
 
-- [ ] Improve log window, support log category filtering
+- [x] Improve log window, support log category filtering
 
 - [ ] Improve log window command customization
 

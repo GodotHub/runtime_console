@@ -32,7 +32,7 @@ namespace RuntimeConsole;
 [Tool]
 public partial class RuntimeConsolePlugin : EditorPlugin
 {
-    PackedScene _settingPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/PluginSetting.tscn");
+    PackedScene _settingPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/SettingPanel/PluginSetting.tscn");
     PluginSetting _settingPanelInstance;
     
     public override void _EnterTree()

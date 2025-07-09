@@ -68,6 +68,7 @@ public partial class ObjectInspectorWindow : Window
         _nextMatchButton.Pressed += OnNextMatch;
         _previousMatchButton.Pressed += OnPreviousMatch;
 
+        Size = (Vector2I)GetTree().Root.GetViewport().GetVisibleRect().Size / 2; 
         _tree.Columns = 3; // 设置列数为3
         _tree.SetColumnTitle(0, "Name"); // 设置标题
         _tree.SetColumnTitle(1, "Type");
@@ -201,7 +202,7 @@ public partial class ObjectInspectorWindow : Window
 
 
     // 开始从根节点构建树
-    public void InspectAllSceneObjects()
+    private void InspectAllSceneObjects()
     {
         _tree.Clear();
 

@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://hkl1k5vl1ef"]
+[gd_scene load_steps=3 format=3 uid="uid://hkl1k5vl1ef"]
 
 [ext_resource type="Script" uid="uid://b1oanjofg2wxh" path="res://addons/RuntimeConsole/LogAndCommandWindow/LogCommandWindow.cs" id="1_egis5"]
+[ext_resource type="Script" uid="uid://cbc4qp3bk2k1p" path="res://addons/RuntimeConsole/LogAndCommandWindow/ConsoleCommands.cs" id="2_8c2dq"]
 
 [node name="Log&Command" type="Window"]
 auto_translate_mode = 1
 title = "Log&Command"
 initial_position = 2
+size = Vector2i(285, 100)
 visible = false
 wrap_controls = true
 always_on_top = true
@@ -32,13 +34,41 @@ vertical_alignment = 2
 selection_enabled = true
 drag_and_drop_selection_enabled = false
 
-[node name="Input" type="LineEdit" parent="IoContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="IoContainer"]
+layout_mode = 2
+
+[node name="Input" type="LineEdit" parent="IoContainer/HBoxContainer"]
 unique_name_in_owner = true
 z_index = 1
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "Enter command here..."
 keep_editing_on_text_submit = true
 context_menu_enabled = false
 emoji_menu_enabled = false
 caret_blink = true
 caret_force_displayed = true
+
+[node name="Info" type="Button" parent="IoContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+toggle_mode = true
+text = "INFO"
+
+[node name="Warning" type="Button" parent="IoContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+toggle_mode = true
+text = "WARN"
+
+[node name="Error" type="Button" parent="IoContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+toggle_mode = true
+text = "ERROR"
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("2_8c2dq")

@@ -7,21 +7,23 @@ namespace RuntimeConsole;
 [HideInObjectTree]
 public partial class Console : Node
 {
-    public record class InspectorSetting
-    {
-        /// <summary>
-        /// 是否展示 GDScript 中枚举属性的名称（如 "Error.OK"），否则仅显示枚举的数值（如 0）。
-        /// <br/>
-        /// 启用后将遍历 GodotSharp 中所有枚举类型以匹配内置枚举名，
-        /// 对性能影响极小，但在极端情况下可能稍微增加初始化时间。
-        /// </summary>
-        public bool ShowGDScriptObjectProperties { get; init; } = true;
-        /// <summary>
-        /// 是否在检查器中显示GDScript对象的属性
-        /// </summary>
-        public bool ShowGDScriptEnumName { get; init; } = false;
-    }
+    /// <summary>
+    /// 检查器设置
+    /// </summary>
+    /// <param name="ShowGDScriptObjectProperties">        
+    /// 是否展示 GDScript 中枚举属性的名称（如 "Error.OK"），否则仅显示枚举的数值（如 0）。
+    /// <br/>
+    /// 启用后将遍历 GodotSharp 中所有枚举类型以匹配内置枚举名，
+    /// 对性能影响极小，但在极端情况下可能稍微增加初始化时间。        
+    /// </param>
+    /// <param name="ShowGDScriptEnumName">
+    /// 是否在检查器中显示GDScript对象的属性
+    /// </param>
+    public record class InspectorSetting(bool ShowGDScriptObjectProperties = false, bool ShowGDScriptEnumName = true);
 
+    /// <summary>
+    /// 运行时控制台的实例
+    /// </summary>
     public static Console GameConsole { get; private set; }
     Button _openConsoleButton;
     HBoxContainer _menu;
@@ -41,12 +43,76 @@ public partial class Console : Node
             });
         }
         // 作为全局加载，设置到最前一层
-        GetTree().Root.CallDeferred("move_child", this, -1);
+        GetTree().Root.CallDeferred(Node.MethodName.MoveChild, this, -1);
 
         _openConsoleButton = GetNode<Button>("%OpenConsoleButton");
         _menu = GetNode<HBoxContainer>("%Menu");
         _canvasLayer = GetNode<CanvasLayer>("%CanvasLayer");
 
+        _openConsoleButton.Pressed += () =>
+        {
+            foreach (var window in _windows.Values)
+            {
+                window.Visible = false;
+            }
+            _menu.Visible = !_menu.Visible;            
+        };
+
+        CreateWindows();
+
+    }
+
+    public override void _ExitTree()
+    {
+        if (InputMap.HasAction("switch_console_display"))
+        {
+            InputMap.EraseAction("switch_console_display");
+        }
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Input.IsActionJustPressed("switch_console_display"))
+        {
+            HideWindows();
+        }
+    }
+
+    /// <summary>
+    /// 更改检查器设置
+    /// </summary>
+    /// <param name="setting">检查器设置实例</param>
+    public void ChangeInspectorSettings(InspectorSetting setting)
+    {
+        var inspectorWindow = GetConsoleWindow<ObjectInspectorWindow>("Object Inspector");
+        if (inspectorWindow == null)
+        {
+            GD.PrintErr("[RuntimeConsole]: Object Inspector window does not enabled");
+            return;
+        }
+        inspectorWindow.ShowGDScriptObjectProperties = setting.ShowGDScriptObjectProperties;
+        inspectorWindow.ShowGDScriptEnumName = setting.ShowGDScriptEnumName;
+    }
+
+    /// <summary>
+    /// 使用配置中的键获取窗口实例
+    /// </summary>
+    /// <typeparam name="T">控制台窗口的类型</typeparam>
+    /// <param name="key">配置中设定的窗口的键</param>
+    /// <returns>控制台窗口实例，失败时返回null</returns>    
+    public T GetConsoleWindow<T>(string key) where T : Window
+    {
+        if (!_windows.TryGetValue(key, out var window))
+        {
+            return null;
+        }
+
+        return (T)window;
+    }
+
+
+    private void CreateWindows()
+    {
         // 默认配置
         var defaultWindowSettings = new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>
         {
@@ -64,18 +130,22 @@ public partial class Console : Node
         var windowSettings = ProjectSettings.GetSetting("runtime_console/window_settings", defaultWindowSettings)
             .AsGodotArray<Godot.Collections.Dictionary<string, Variant>>();
 
+        // GD.Print(windowSettings);
+
         foreach (var setting in windowSettings)
         {
             // 排除enabled字段
-            var keyValue = setting.First(kvp => kvp.Key != "enabled");
+            var keyValue = setting.FirstOrDefault(kvp => kvp.Key != "enabled");
+            if (keyValue.Equals(default(KeyValuePair<string, Variant>)))
+                continue;
+
             var key = keyValue.Key;
             var path = keyValue.Value.AsString();
 
-            // 过滤未启用的窗口
-            var enabled = setting["enabled"].AsBool();
-            
-            if (!enabled)
+            // 过滤未启用的窗口            
+            if (!setting.TryGetValue("enabled", out var enabled) || !enabled.AsBool())
             {
+                GD.Print($"[RuntimeConsole] Window " + key + " is disabled");
                 continue;
             }
 
@@ -83,6 +153,7 @@ public partial class Console : Node
             var button = new Button()
             {
                 Text = key,
+                Name = key,
             };
 
             // 加载窗口
@@ -103,43 +174,16 @@ public partial class Console : Node
             _windows.Add(key, validWindow);
             _menu.AddChild(button);
         }
-
     }
 
-    public override void _ExitTree()
+    private void HideWindows()
     {
-        if (InputMap.HasAction("switch_console_display"))
+        foreach (var window in _windows.Values)
         {
-            InputMap.EraseAction("switch_console_display");
+            window.Visible = false;
         }
-    }
-    public override void _Process(double delta)
-    {
-        if (Input.IsActionJustPressed("switch_console_display"))
-        {
-            foreach (var window in _windows.Values)
-            {
-                window.Visible = false;
-            }
-            _canvasLayer.Visible = !_canvasLayer.Visible;
-        }
-    }
-
-    /// <summary>
-    /// 使用配置中的键获取窗口实例
-    /// </summary>
-    /// <typeparam name="T">控制台窗口的类型</typeparam>
-    /// <param name="key">配置中设定的窗口的键</param>
-    /// <returns>控制台窗口实例</returns>
-    /// <exception cref="System.ArgumentException">键不存在于注册表时抛出</exception>
-    public T GetWindow<T>(string key) where T : Window
-    {
-        if (!_windows.TryGetValue(key, out var window))
-        {
-            throw new System.ArgumentException($"{key} not found");
-        }
-
-        return (T)window;
+        _menu.Visible = !_canvasLayer.Visible;            
+        _canvasLayer.Visible = !_canvasLayer.Visible;
     }
 
 }
