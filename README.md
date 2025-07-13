@@ -73,7 +73,8 @@ func execute(args: Array) -> void:
 
 C# 脚本 需继承自任意 Godot 类型，并实现 `IConsoleCommand` 接口。
 
-> 💡 注意：所有命令脚本文件需放置在 `LogAndCommandWindow/CommandComponent/Commands` 目录下。保存后命令会自动加载，无需手动注册。
+> 💡 注意：所有命令脚本文件需放置在插件配置的`CommandPath`对应目录下（默认为`LogAndCommandWindow/CommandComponent/Commands`）保存后命令会自动加载，无需手动注册。  
+> 你可以编辑插件配置文件(`Config/config.tres`)来更改默认目录
 
 ---
 
@@ -113,7 +114,8 @@ func parse(token: String) -> Error:
 
 C# 脚本需继承自任意的`Godot`类型，并实现`IParameterParser`接口。
 
-> 💡 注意：所有参数解析器脚本文件需放置在 `LogAndCommandWindow/CommandComponent/ParameterParser` 目录下。保存后解析器会自动加载，无需手动注册。
+> 💡 注意：所有参数解析器脚本文件需放置在插件配置的`ParameterParserPath`目录下（默认为`LogAndCommandWindow/CommandComponent/ParameterParser`）。保存后解析器会自动加载，无需手动注册。   
+> 你可以编辑插件配置文件(`Config/config.tres`)来更改默认目录
 
 ## 添加自定义控制台窗口
 

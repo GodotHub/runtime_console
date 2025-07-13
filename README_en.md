@@ -75,7 +75,8 @@ func execute(args: Array) -> void:
 
 **C# scripts** should inherit from any `Godot` type and implement the `IConsoleCommand` interface.
 
-> 💡 Note: All command scripts must be placed in the `LogAndCommandWindow/CommandComponent/Commands` directory. Once saved, commands will be loaded automatically — no manual registration is needed.
+> 💡 Note: All command scripts must be placed in the plugin configuration `CommandPath ` directory (the default is ` LogAndCommandWindow CommandComponent/Commands `).  Once saved, commands will be loaded automatically — no manual registration is needed.  
+> You can edit the plugin configuration file (`Config/config.tres`) to change the default directory
 
 ---
 
@@ -119,8 +120,9 @@ func parse(token: String) -> Error:
 
 **C# scripts** should inherit from any `Godot` type and implement the `IParameterParser` interface.
 
-> 💡 Note: All parser scripts must be placed in the `LogAndCommandWindow/CommandComponent/ParameterParser` directory.  
-> Parsers will be loaded automatically — no manual registration required.
+> 💡 Note: All parser scripts must be placed in the plugin configuration ` ParameterParserPath ` directory (the default is ` LogAndCommandWindow CommandComponent/ParameterParser `). 
+> Parsers will be loaded automatically — no manual registration required.  
+> You can edit the plugin configuration file (`Config/config.tres`) to change the default directory
 
 ## Creating a Custom Console Window
 
