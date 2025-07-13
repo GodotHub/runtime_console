@@ -23,7 +23,7 @@ RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，
 
 - [x] 更改日志窗口，支持日志类别筛选
 
-- [ ] 更改日志窗口命令功能自定义方式
+- [x] 更改日志窗口命令功能自定义方式
 
 - [ ] 更改对象检查器窗口UI，支持运行时编辑属性，调用方法
 
@@ -40,45 +40,96 @@ RuntimeConsole 是一个适用于 Godot .NET 4.4+ 的运行时控制台插件，
 2. 在 `Project Settings > Plugins` 中启用插件。
 
 
-## 添加自定义命令
+## 自定义命令
 
-**未来版本可能更改以下添加自定义命令的方法**
+### 添加自定义命令
 
-要添加自定义命令，可修改 `ConsoleCommands.cs` 创建新的方法。
-每个命令方法：
-- 必须接收 `Godot.Collections.Array` 类型的参数。
-- 需要自行处理异常。
+你可以通过 C# 或 GDScript 添加自定义控制台命令。所有命令需实现 [`IConsoleCommand`](/LogAndCommandWindow/CommandComponent/Interface/IConsoleCommand.cs) 接口（C#）或对应的 GDScript 接口结构。
 
-示例：
-```csharp
-private void Greet(Godot.Collections.Array args)
-{
-    if (args.Count < 1)
-    {
-        Console.GameConsole.PrintNoFormattedErrorMessage("Usage: Greet <name>");
-        return;
-    }
-    Console.GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
-}
+**GDScript 脚本** 需实现以下方法，方法签名必须与接口一致，**必须使用类型提示**：
+    
+- `get_keyword() -> String` 或 只读属性`keyword`（匿名 getter）
+
+- `get_parameter_types() -> Array[Variant.Type]` 或 只读属性 `parameter_types`（匿名 getter）
+
+- `execute(Array) -> void`
+
+你可以使用插件提供的[命令模板](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/command_template.gd)来快速创建一个命令：
+```gdscript
+# Implement IConsoleCommand 
+extends Resource
+
+var keyword: String:
+	get:
+		return "" # Replace with your command keyword
+
+var parameter_types: Array[Variant.Type]:
+	get:
+		return [] # Replace with the expected parameter types (in order)
+
+func execute(args: Array) -> void:
+	pass # Replace with your command logic
 ```
 
-详见[`ConsoleCommands.cs`](/ConsoleCommands.cs)
+C# 脚本 需继承自任意 Godot 类型，并实现 `IConsoleCommand` 接口。
+
+> 💡 注意：所有命令脚本文件需放置在 `LogAndCommandWindow/CommandComponent/Commands` 目录下。保存后命令会自动加载，无需手动注册。
+
+---
+
+### 添加自定义参数解析器
+
+你也可以通过 C# 或 GDScript 添加自定义命令参数解析器。所有解析器需实现 [`IParameterParser`](/LogAndCommandWindow/CommandComponent/Interface/IParameterParser.cs) 接口（C#）或对应的 GDScript 接口结构。
+
+> **⚠️ 注意：一个 Variant.Type 只能绑定一个解析器。多个解析器解析相同类型会导致冲突。**
+
+GDScript 脚本需要实现以下方法，方法签名必须与接口一致，必须要使用类型提示：
+
+- `get_supported_types() -> Array[Variant.Type]` 或 只读属性`supported_types`（匿名getter）
+
+- `get_result() -> Variant` 或 只读属性`result`（匿名getter）
+
+- `parse(String) -> Error`
+
+你可以使用插件提供的[模板](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/parameter_parser_template.gd)来创建分析器：
+```gdscript
+# Implement IParameterParser
+extends Resource
+
+var supported_types : Array[Variant.Type]:
+    get:
+        return [] # Replace with the types supported by this parser
+
+var result : Variant:
+    get:
+        return _result
+
+var _result : Variant
+
+func parse(token: String) -> Error:
+    # Replace with your parsing logic
+    return OK
+```
+
+C# 脚本需继承自任意的`Godot`类型，并实现`IParameterParser`接口。
+
+> 💡 注意：所有参数解析器脚本文件需放置在 `LogAndCommandWindow/CommandComponent/ParameterParser` 目录下。保存后解析器会自动加载，无需手动注册。
 
 ## 添加自定义控制台窗口
 
-1. 新建一个场景，并为该场景附加脚本，该场景脚本必须继承自`Window`，场景根节点必须是`Window`，支持使用`GDScript`编写脚本
+1. 新建一个场景并附加脚本，场景根节点必须为 `Window`，脚本也必须继承 `Window`（可使用 GDScript 编写）
 
-2. 实现功能
+2. 按需添加功能与 UI 元素
 
-3. 在插件的`Console Windows`配置界面，点击`Add Window`按钮，填写窗口的键，并选择场景，然后启用
+3. 打开插件配置文件 `Config/config.tres`，在 `Window Settings` 属性中新增一个元素：
 
-4. 点击`Save`按钮，保存配置
+    - `Key`：窗口按钮显示的文本
 
-5. 重新加载当前项目
+    - `Window`：绑定刚刚创建的场景
 
-## 注意事项
+    - 勾选 `Enabled` 启用该窗口
 
-- 自定义命令机制将在未来版本中优化升级
+4. 保存配置，插件会自动加载并显示该窗口
 
 ## 许可证
 

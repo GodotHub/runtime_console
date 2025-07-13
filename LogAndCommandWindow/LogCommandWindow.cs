@@ -33,6 +33,8 @@ public partial class LogCommandWindow : Window
 	private readonly List<Log> _logs = [];
 	private int _historyIndex = -1;
 
+	private CommandParser _parser = new(Console.GameConsole.GetConfig().ParameterParserPath, Console.GameConsole.GetConfig().CommandPath);
+
 	public override void _Ready()
 	{
 		_consoleInput = GetNode<LineEdit>("%Input");
@@ -43,29 +45,29 @@ public partial class LogCommandWindow : Window
 		_errorButton = GetNode<Button>("%Error");
 
 		_infoButton.Pressed += () =>
-		{			
+		{
 			ToggleLogs(LogType.Info);
 		};
 
 		_warningButton.Pressed += () =>
-		{		
+		{
 			ToggleLogs(LogType.Warning);
 		};
 
 		_errorButton.Pressed += () =>
-		{		
+		{
 			ToggleLogs(LogType.Error);
 		};
 
 		var theme = ThemeDB.GetProjectTheme() ?? ThemeDB.GetDefaultTheme();
-		
+
 		var pressedBox = theme.GetStylebox("pressed", "Button").Duplicate(true) as StyleBoxFlat;
 		var focusBox = theme.GetStylebox("focus", "Button").Duplicate(true) as StyleBoxFlat;
-		
+
 		StyleBoxFlat normal = focusBox.Duplicate(true) as StyleBoxFlat;
 		normal.BgColor = pressedBox.BgColor;
 		normal.DrawCenter = true;
-		
+
 		var buttons = new[] { _infoButton, _warningButton, _errorButton };
 		foreach (var btn in buttons)
 		{
@@ -94,7 +96,8 @@ public partial class LogCommandWindow : Window
 	public void Print(params object[] message)
 	{
 		string formattedMessage = string.Concat($"[{DateTime.Now}][INFO]: ", string.Concat(message), "\n");
-		_consoleOutput.AppendText(formattedMessage);
+		if (_logTypeVisible[LogType.Info])
+			_consoleOutput.AppendText(formattedMessage);
 		_logs.Add(new(formattedMessage, LogType.Info));
 	}
 
@@ -109,7 +112,8 @@ public partial class LogCommandWindow : Window
 			string.Concat(message),
 			"[/color]\n"
 		);
-		_consoleOutput.AppendText(formattedMessage);
+		if (_logTypeVisible[LogType.Error])
+			_consoleOutput.AppendText(formattedMessage);
 		_logs.Add(new(formattedMessage, LogType.Error));
 	}
 
@@ -124,7 +128,8 @@ public partial class LogCommandWindow : Window
 			string.Concat(message),
 			"[/color]\n"
 		);
-		_consoleOutput.AppendText(formattedMessage);
+		if (_logTypeVisible[LogType.Warning])
+			_consoleOutput.AppendText(formattedMessage);
 		_logs.Add(new(formattedMessage, LogType.Warning));
 	}
 
@@ -135,7 +140,8 @@ public partial class LogCommandWindow : Window
 	public void PrintRaw(params object[] message)
 	{
 		var msg = string.Concat(message) + "\n";
-		_consoleOutput.AppendText(msg);
+		if (_logTypeVisible[LogType.Info])
+			_consoleOutput.AppendText(msg);
 		_logs.Add(new(msg, LogType.Info));
 	}
 
@@ -146,35 +152,26 @@ public partial class LogCommandWindow : Window
 	public void PrintRawError(params object[] message)
 	{
 		var msg = $"[color=red]{string.Concat(message)}[/color]\n";
-		_consoleOutput.AppendText(msg);
+		if (_logTypeVisible[LogType.Error])
+			_consoleOutput.AppendText(msg);
 		_logs.Add(new(msg, LogType.Error));
 	}
 
-	// 执行命令（TODO:后续可能会更改实现）
+	// 执行命令
 	private void InputCommand(string input)
 	{
-		string[] commandAndArgs = input.Split([' '], StringSplitOptions.RemoveEmptyEntries);
-		if (commandAndArgs.Length == 0) return;
-
-		// 分割命令和参数
-		string command = commandAndArgs[0];
+		if (string.IsNullOrEmpty(input))
+			return;
 		_historyCommand.Add(input);
 		_historyIndex = -1;
 
-		if (!ConsoleCommands.Commands.HasMethod(command))
+		var result = _parser.Parse(input);
+
+		if (result != CommandParser.ParseResult.OK)
 		{
-			PrintRawError($"Invalid command : {command}");
-			_consoleInput.Text = "";
-			return;
+			PrintRawError(CommandParser.GetParseMessage(result));
 		}
 
-		Godot.Collections.Array validArgs = new(commandAndArgs
-			.Skip(1)
-			.Select(Variant.CreateFrom)
-			.ToArray());
-
-		// 在单例上调用指定命令
-		ConsoleCommands.Commands.Call(command, validArgs);
 		_consoleInput.Text = "";
 	}
 
@@ -217,17 +214,15 @@ public partial class LogCommandWindow : Window
 		_consoleInput.CaretColumn = _consoleInput.Text.Length;
 	}
 
-    private void ToggleLogs(LogType logType)
-    {
-        _logTypeVisible[logType] = !_logTypeVisible[logType];
+	private void ToggleLogs(LogType logType)
+	{
+		_logTypeVisible[logType] = !_logTypeVisible[logType];		
 
-        _consoleOutput.Clear();
-        
-        var visibleLogs = _logs.Where(log => _logTypeVisible[log.LogType]);
-        var builder = new StringBuilder();
-        foreach (var log in visibleLogs)        
-            builder.Append(log.Message);
-        
-        _consoleOutput.Text = builder.ToString();
+		var visibleLogs = _logs.Where(log => _logTypeVisible[log.LogType]);
+		var builder = new StringBuilder();
+		foreach (var log in visibleLogs)
+			builder.Append(log.Message);
+
+		_consoleOutput.ParseBbcode(builder.ToString());
 	}
 }

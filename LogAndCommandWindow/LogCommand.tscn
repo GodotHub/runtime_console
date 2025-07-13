@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://hkl1k5vl1ef"]
+[gd_scene load_steps=2 format=3 uid="uid://hkl1k5vl1ef"]
 
 [ext_resource type="Script" uid="uid://b1oanjofg2wxh" path="res://addons/RuntimeConsole/LogAndCommandWindow/LogCommandWindow.cs" id="1_egis5"]
-[ext_resource type="Script" uid="uid://cbc4qp3bk2k1p" path="res://addons/RuntimeConsole/LogAndCommandWindow/ConsoleCommands.cs" id="2_8c2dq"]
 
 [node name="Log&Command" type="Window"]
 auto_translate_mode = 1
@@ -69,6 +68,3 @@ layout_mode = 2
 size_flags_horizontal = 8
 toggle_mode = true
 text = "ERROR"
-
-[node name="Node" type="Node" parent="."]
-script = ExtResource("2_8c2dq")

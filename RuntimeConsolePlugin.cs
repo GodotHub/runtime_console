@@ -32,43 +32,14 @@ namespace RuntimeConsole;
 [Tool]
 public partial class RuntimeConsolePlugin : EditorPlugin
 {
-    PackedScene _settingPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/SettingPanel/PluginSetting.tscn");
-    PluginSetting _settingPanelInstance;
-    
     public override void _EnterTree()
     {
         AddAutoloadSingleton("Console", "res://addons/RuntimeConsole/Console.tscn");
-
-        _settingPanelInstance = _settingPanel.Instantiate<PluginSetting>();
-        EditorInterface.Singleton.GetEditorMainScreen().AddChild(_settingPanelInstance);
-        _MakeVisible(false);
     }
 
     public override void _ExitTree()
     {
         RemoveAutoloadSingleton("Console");
-
-        _settingPanelInstance?.QueueFree();
-    }
-
-    public override bool _HasMainScreen() => true;
-    
-
-    public override void _MakeVisible(bool visible)
-    {
-        if (_settingPanelInstance != null)
-        {
-            _settingPanelInstance.Visible = visible;
-        }
-        
-    }
-
-    public override string _GetPluginName() => "Runtime Console";
-    
-
-    public override Texture2D _GetPluginIcon()
-    {
-        return EditorInterface.Singleton.GetEditorTheme().GetIcon("Node", "EditorIcons");
     }
 }
 

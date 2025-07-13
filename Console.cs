@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Godot;
 
 namespace RuntimeConsole;
@@ -24,12 +25,31 @@ public partial class Console : Node
     /// <summary>
     /// 运行时控制台的实例
     /// </summary>
-    public static Console GameConsole { get; private set; }
+    public static Console GameConsole { get; private set; }    
     Button _openConsoleButton;
     HBoxContainer _menu;
     CanvasLayer _canvasLayer;
     readonly Dictionary<string, Window> _windows = []; // 窗口名称 -> 窗口
 
+    readonly PluginSetting _callback = new()
+    {
+        WindowSettings = [
+            new(
+                key:"Log and Command",
+                window: ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/LogAndCommandWindow/LogCommand.tscn"),
+                enabled: true
+            ),
+
+            new(
+                key:"Object Inspector",
+                window: ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectInspectorWindow.tscn"),
+                enabled: true
+            ),
+        ],
+        CommandPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent/Commands",
+        ParameterParserPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent"
+    };
+    
     public override void _EnterTree()
     {
         GameConsole = this;
@@ -55,7 +75,7 @@ public partial class Console : Node
             {
                 window.Visible = false;
             }
-            _menu.Visible = !_menu.Visible;            
+            _menu.Visible = !_menu.Visible;
         };
 
         CreateWindows();
@@ -110,69 +130,57 @@ public partial class Console : Node
         return (T)window;
     }
 
+    /// <summary>
+    /// 获取插件配置
+    /// </summary>
+    /// <returns>插件配置，读取失败时返回默认配置</returns>
+    public PluginSetting GetConfig()
+    {
+        if (!ResourceLoader.Exists("res://addons/RuntimeConsole/Config/config.tres"))
+        {
+            GD.PrintErr("[RuntimeConsole]: Config file not found, using default settings.");
+            return _callback;
+        }
+
+        var pluginSetting = ResourceLoader.Load<PluginSetting>("res://addons/RuntimeConsole/Config/config.tres");
+
+        return pluginSetting;
+    }
 
     private void CreateWindows()
     {
-        // 默认配置
-        var defaultWindowSettings = new Godot.Collections.Array<Godot.Collections.Dictionary<string, Variant>>
+        var config = GetConfig();
+        foreach (var windowSetting in config.WindowSettings)
         {
-            new(){
-                { "Log and Command", "res://addons/RuntimeConsole/LogAndCommandWindow/LogCommand.tscn"},
-                { "enabled", true}
-            },
-            new(){
-                { "Object Inspector", "res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectInspector.tscn"},
-                { "enabled", true}
-            },
-        };
-
-        // 获取配置，获取失败使用默认配置
-        var windowSettings = ProjectSettings.GetSetting("runtime_console/window_settings", defaultWindowSettings)
-            .AsGodotArray<Godot.Collections.Dictionary<string, Variant>>();
-
-        // GD.Print(windowSettings);
-
-        foreach (var setting in windowSettings)
-        {
-            // 排除enabled字段
-            var keyValue = setting.FirstOrDefault(kvp => kvp.Key != "enabled");
-            if (keyValue.Equals(default(KeyValuePair<string, Variant>)))
-                continue;
-
-            var key = keyValue.Key;
-            var path = keyValue.Value.AsString();
-
-            // 过滤未启用的窗口            
-            if (!setting.TryGetValue("enabled", out var enabled) || !enabled.AsBool())
+            if (!windowSetting.Enabled)
             {
-                GD.Print($"[RuntimeConsole] Window " + key + " is disabled");
                 continue;
             }
 
+            if (windowSetting.Window == null)
+            {
+                GD.PrintErr($"[RuntimeConsole]: Window '{windowSetting.Key}' has no scene assigned.");
+                continue;
+            }
 
+            if (_windows.ContainsKey(windowSetting.Key))
+            {
+                GD.PrintErr($"[RuntimeConsole]: Window '{windowSetting.Key}' already exists.");
+                continue;
+            }
+
+            var window = windowSetting.Window.Instantiate<Window>();
+            window.Name = windowSetting.Key;
+            window.Visible = false;
             var button = new Button()
             {
-                Text = key,
-                Name = key,
+                Text = windowSetting.Key,
+                Name = windowSetting.Key,
             };
-
-            // 加载窗口
-            var prefab = ResourceLoader.Load<PackedScene>(path);
-            var window = prefab.Instantiate();
-
-            // 窗口类型不正确
-            if (window is not Window validWindow)
-            {
-                GD.PrintErr("[RuntimeConsole] Failed to load console window: " + path);
-                continue;
-            }
-
-            validWindow.Name = key;
-            button.AddChild(validWindow);
-            button.Pressed += () => validWindow.Visible = !validWindow.Visible;
-
-            _windows.Add(key, validWindow);
+            button.Pressed += () => window.Visible = !window.Visible;
+            button.AddChild(window);
             _menu.AddChild(button);
+            _windows[windowSetting.Key] = window;
         }
     }
 

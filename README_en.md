@@ -23,7 +23,7 @@ Freely extend console feature windows
 
 - [x] Improve log window, support log category filtering
 
-- [ ] Improve log window command customization
+- [x] Improve log window command customization
 
 - [ ] Improve object inspector UI, support editing properties and calling methods at runtime
 
@@ -39,46 +39,106 @@ Freely extend console feature windows
 
 2. Enable the plugin in `Project Settings > Plugins`.
 
-## Adding Custom Commands
+## Custom Commands
 
-**Note: The method for adding custom commands may change in future versions**
+### Adding Custom Commands
 
-To add custom commands, modify `ConsoleCommands.cs` to create new methods.
-Each command method must:
-- Accept a parameter of type `Godot.Collections.Array`.
-- Handle exceptions manually.
+You can add custom commands using **C#** or **GDScript**.
+All commands must implement the [`IConsoleCommand`](/LogAndCommandWindow/CommandComponent/Interface/IConsoleCommand.cs) interface (for C#) or the corresponding GDScript structure.
 
-Example:
-```csharp
-private void Greet(Godot.Collections.Array args)
-{
-    if (args.Count < 1)
-    {
-        Console.GameConsole.PrintNoFormattedErrorMessage("Usage: Greet <name>");
-        return;
-    }
-    Console.GameConsole.PrintNoFormattedMessage($"Hello, {args[0]}!");
-}
+**GDScript scripts** must implement the following methods.
+Function signatures must exactly match the interface, and **type hints are required**:
+
+- `get_keyword() -> String` or a read-only property `keyword` (anonymous getter)
+
+- `get_parameter_types() -> Array[Variant.Type]` or a read-only property `parameter_types` (anonymous getter)
+
+- `execute(Array) -> void`
+
+You can use the provided [`command template`](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/command_template.gd) to create a new command easily:
+
+```gdscript
+# Implement IConsoleCommand 
+extends Resource
+
+var keyword: String:
+	get:
+		return "" # Replace with your command keyword
+
+var parameter_types: Array[Variant.Type]:
+	get:
+		return [] # Replace with the expected parameter types (in order)
+
+func execute(args: Array) -> void:
+	pass # Replace with your command logic
 ```
 
-See [`ConsoleCommands.cs`](/ConsoleCommands.cs) for details.
+**C# scripts** should inherit from any `Godot` type and implement the `IConsoleCommand` interface.
 
-## Add Custom Console Window
+> 💡 Note: All command scripts must be placed in the `LogAndCommandWindow/CommandComponent/Commands` directory. Once saved, commands will be loaded automatically — no manual registration is needed.
 
-1. Create a new scene and attach a script to it. The script must inherit from `Window`, and the root node of the scene must be `Window`. GDScript is supported.
+---
 
-2. Implement your desired functionality.
+### Adding Custom Parameter Parsers
 
-3. In the plugin's `Console Windows` configuration interface, click the `Add Window` button, enter the window key, select the scene, and enable it.
+You can also create **custom argument parsers** for your commands using either **C#** or **GDScript**.
+All parsers must implement the [`IParameterParser`](/LogAndCommandWindow/CommandComponent/Interface/IParameterParser.cs) interface (C#) or the equivalent GDScript structure.
 
-4. Click the `Save` button to save the configuration.
+> ⚠️ Each Variant.Type can only be handled by one parser.   
+> Defining multiple parsers for the same type will result in conflicts.
 
-5. Reload the current project.
+**GDScript scripts** must implement the following methods.
+Function signatures must exactly match the interface, and **type hints are required**:
 
+- `get_supported_types() -> Array[Variant.Type]` or a read-only property `supported_types` (anonymous getter)
 
-## Notes
+- `get_result() -> Variant` or a read-only property `result` (anonymous getter)
 
-- Custom command mechanism will be optimized in future versions
+- `parse(String) -> Error`
+
+You can use the provided [`parser template`](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/parameter_parser_template.gd) to quickly create a custom parser:
+
+```gdscript
+# Implement IParameterParser
+extends Resource
+
+var supported_types : Array[Variant.Type]:
+    get:
+        return [] # Replace with the types supported by this parser
+
+var result : Variant:
+    get:
+        return _result
+
+var _result : Variant
+
+func parse(token: String) -> Error:
+    # Replace with your parsing logic
+    return OK
+```
+
+**C# scripts** should inherit from any `Godot` type and implement the `IParameterParser` interface.
+
+> 💡 Note: All parser scripts must be placed in the `LogAndCommandWindow/CommandComponent/ParameterParser` directory.  
+> Parsers will be loaded automatically — no manual registration required.
+
+## Creating a Custom Console Window
+
+1. Create a new scene whose root node is of type `Window`, and attach a script that inherits from `Window`.
+(You can use GDScript to write this script.)
+
+2. Implement your desired features in the window.
+
+3. Edit the plugin config file: `Config/config.tres`.
+Under the `Window Settings` section, add a new element:
+
+    - `Key`: The label for the window button
+
+    - `Window`: Assign the scene you just created
+
+    - Check `Enabled` to make the window available
+
+4. Save the configuration. The plugin will load your custom window automatically.
 
 ## License
 
