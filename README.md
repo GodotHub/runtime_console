@@ -91,7 +91,7 @@ GDScript 脚本需要实现以下方法，方法签名必须与接口一致，�
 
 - `parse(String) -> Error`
 
-你可以使用插件提供的[模板](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/parameter_parser_template.gd)来创建分析器：
+你可以使用插件提供的[解析器模板](/LogAndCommandWindow/CommandComponent/GDScriptInterfaceTemplate/parameter_parser_template.gd)来快速创建一个解析器：
 ```gdscript
 # Implement IParameterParser
 extends Resource
