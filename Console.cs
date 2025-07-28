@@ -8,19 +8,6 @@ namespace RuntimeConsole;
 [HideInObjectTree]
 public partial class Console : Node
 {
-    /// <summary>
-    /// 检查器设置
-    /// </summary>
-    /// <param name="ShowGDScriptObjectProperties">        
-    /// 是否展示 GDScript 中枚举属性的名称（如 "Error.OK"），否则仅显示枚举的数值（如 0）。
-    /// <br/>
-    /// 启用后将遍历 GodotSharp 中所有枚举类型以匹配内置枚举名，
-    /// 对性能影响极小，但在极端情况下可能稍微增加初始化时间。        
-    /// </param>
-    /// <param name="ShowGDScriptEnumName">
-    /// 是否在检查器中显示GDScript对象的属性
-    /// </param>
-    public record class InspectorSetting(bool ShowGDScriptObjectProperties = false, bool ShowGDScriptEnumName = true);
 
     /// <summary>
     /// 运行时控制台的实例
@@ -47,7 +34,8 @@ public partial class Console : Node
             ),
         ],
         CommandPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent/Commands",
-        ParameterParserPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent"
+        ParameterParserPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent",
+        EditorIconsTheme = ResourceLoader.Load<Theme>("res://addons/RuntimeConsole/ObjectInspectorWindow/editor_icons.tres")		    
     };
     
     public override void _EnterTree()
@@ -98,21 +86,6 @@ public partial class Console : Node
         }
     }
 
-    /// <summary>
-    /// 更改检查器设置
-    /// </summary>
-    /// <param name="setting">检查器设置实例</param>
-    public void ChangeInspectorSettings(InspectorSetting setting)
-    {
-        var inspectorWindow = GetConsoleWindow<ObjectInspectorWindow>("Object Inspector");
-        if (inspectorWindow == null)
-        {
-            GD.PrintErr("[RuntimeConsole]: Object Inspector window does not enabled");
-            return;
-        }
-        inspectorWindow.ShowGDScriptObjectProperties = setting.ShowGDScriptObjectProperties;
-        inspectorWindow.ShowGDScriptEnumName = setting.ShowGDScriptEnumName;
-    }
 
     /// <summary>
     /// 使用配置中的键获取窗口实例

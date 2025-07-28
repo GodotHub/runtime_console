@@ -6,8 +6,7 @@
 auto_translate_mode = 1
 title = "ObjectInspector"
 initial_position = 2
-size = Vector2i(640, 100)
-visible = false
+size = Vector2i(710, 570)
 wrap_controls = true
 always_on_top = true
 script = ExtResource("1_jmcdg")
@@ -28,7 +27,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(504, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Search members by Name/TypeName/Value "
+placeholder_text = "Search members"
 
 [node name="PreviousMatchButton" type="Button" parent="VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -50,7 +49,5 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/custom_button_font_highlight = Color(0.77, 0.73766, 0.2849, 1)
-columns = 3
 column_titles_visible = true
-hide_root = true
 select_mode = 1
