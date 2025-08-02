@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://x1dwq10mo45h"]
+
+[sub_resource type="Theme" id="Theme_ig7tw"]
+
+[sub_resource type="CSharpScript" id="CSharpScript_7dm0k"]
+script/source = "using Godot;
+
+public partial class Test : Control
+{
+
+}
+"
+
+[sub_resource type="GDScript" id="GDScript_ig7tw"]
+script/source = "# @hide_in_object_tree
+extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_ig7tw")
+script = SubResource("CSharpScript_7dm0k")
+
+[node name="nihao" type="Node2D" parent="."]
+script = SubResource("GDScript_ig7tw")
+
+[node name="Node2D2" type="Node2D" parent="."]
+
+[node name="Node2D3" type="Node2D" parent="."]
+
+[node name="Node2D4" type="Node2D" parent="."]
+
+[node name="Node2D5" type="Node2D" parent="."]
+
+[node name="Node2D6" type="Node2D" parent="."]
+
+[node name="Node2D7" type="Node2D" parent="."]
+
+[node name="Node2D8" type="Node2D" parent="."]
+
+[node name="Node2D9" type="Node2D" parent="."]
+
+[node name="Node2D10" type="Node2D" parent="."]

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3giwx61pi56i"]
+
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_tkb20"]
+[ext_resource type="Script" uid="uid://dpyeqonnmv6u0" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/NumberPropertyEditor.cs" id="2_3iy0h"]
+
+[node name="PropertyEditorBase" instance=ExtResource("1_tkb20")]
+offset_right = 679.0
+script = ExtResource("2_3iy0h")
+
+[node name="ValueEditor" type="SpinBox" parent="PropertyEditorBase" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+max_value = 9.22337e+18
+alignment = 1
+update_on_text_changed = true

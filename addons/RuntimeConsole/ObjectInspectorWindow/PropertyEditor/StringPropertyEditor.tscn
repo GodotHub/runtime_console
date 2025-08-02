@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbmnmwke23pq1"]
+
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_10vsn"]
+[ext_resource type="Script" uid="uid://d4wr6l6byp7d" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.cs" id="2_gh8xa"]
+
+[node name="PanelContainer" instance=ExtResource("1_10vsn")]
+offset_bottom = 122.0
+script = ExtResource("2_gh8xa")
+
+[node name="PropertyEditorBase" parent="." index="0"]
+theme_override_constants/separation = 30
+
+[node name="TextEdit" type="TextEdit" parent="PropertyEditorBase" index="1"]
+unique_name_in_owner = true
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+context_menu_enabled = false
+emoji_menu_enabled = false
+wrap_mode = 1
+autowrap_mode = 1
+scroll_fit_content_height = true
+scroll_fit_content_width = true

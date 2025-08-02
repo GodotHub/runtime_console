@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1o5y03l7labj"]
+
+[ext_resource type="Script" uid="uid://dmtb7wdjo0hw" path="res://addons/RuntimeConsole/Console.cs" id="1_n5ki7"]
+
+[node name="Console" type="Node"]
+script = ExtResource("1_n5ki7")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+layer = 99
+
+[node name="OpenConsoleButton" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+z_index = 99
+offset_top = 30.0
+offset_right = 64.0
+offset_bottom = 94.0
+text = "Console
+(~)"
+
+[node name="Menu" type="HBoxContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -38.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
