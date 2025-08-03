@@ -11,6 +11,7 @@ public partial class BoolPropertyEditor : PropertyEditorBase
     {
         base._Ready();
         _checkBox = GetNode<CheckBox>("%ValueEditor");
+        _checkBox.Pressed += () => _checkBox.Text = _checkBox.ButtonPressed.ToString();
     }
 
     public override object GetValue()
@@ -32,7 +33,6 @@ public partial class BoolPropertyEditor : PropertyEditorBase
         _checkBox.ButtonPressed = boolValue;
         _checkBox.Text = boolValue.ToString();
         _value = boolValue;
-        NotificationValueChanged();
     }
 
     protected override void OnSubmission()
@@ -40,6 +40,7 @@ public partial class BoolPropertyEditor : PropertyEditorBase
         if (Editable)
         {
             SetValue(_checkBox.ButtonPressed);
+            NotificationValueChanged();
         }
     }
 

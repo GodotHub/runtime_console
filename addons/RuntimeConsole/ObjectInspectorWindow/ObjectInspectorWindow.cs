@@ -26,7 +26,7 @@ public partial class ObjectInspectorWindow : Window
         _objRID = GetNode<Label>("%ObjectRID");
         _objProperties = GetNode<VBoxContainer>("%PropertyContainer");
 
-        _objTree.NodeSelected += OnNodeSelected;
+        _objTree.NodeSelected += OnNodeSelected;        
     }
 
     private void OnNodeSelected(Node node)

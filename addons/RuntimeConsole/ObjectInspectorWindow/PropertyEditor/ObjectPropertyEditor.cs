@@ -29,7 +29,7 @@ public partial class ObjectPropertyEditor : PropertyEditorBase
     {
         _value = value;
         _toStringLabel.Text = value == null ? "null" :value.ToString();
-        NotificationValueChanged();
+        // NotificationValueChanged();
     }
 
     protected override void OnSubmission()

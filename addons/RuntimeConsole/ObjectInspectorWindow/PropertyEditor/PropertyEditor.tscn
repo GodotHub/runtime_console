@@ -1,11 +1,8 @@
 [gd_scene format=3 uid="uid://dye73iyffm6f7"]
 
 [node name="PanelContainer" type="PanelContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 318.0
+offset_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 

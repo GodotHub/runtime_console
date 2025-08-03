@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Reflection;
 
 namespace RuntimeConsole;
 
@@ -26,7 +27,14 @@ public static class PropertyEditorFactory
         // 枚举类型属性编辑器
         if (propertyType.IsEnum)
         {
-            return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+            if (propertyType.GetCustomAttribute<FlagsAttribute>() != null)
+            {
+                return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/FlagPropertyEditor.tscn");
+            }
+            else
+            {
+                return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+            }             
         }
 
         // 数值类型属性编辑器

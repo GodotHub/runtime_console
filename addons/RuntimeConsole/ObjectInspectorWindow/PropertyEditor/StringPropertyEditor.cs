@@ -20,6 +20,7 @@ public partial class StringPropertyEditor : PropertyEditorBase
         if (Editable)
         {            
             SetValue(_textEdit.Text);
+            NotificationValueChanged();
         }
     }
 
@@ -53,6 +54,5 @@ public partial class StringPropertyEditor : PropertyEditorBase
             _value = value.ToString();
         }
 
-        NotificationValueChanged();
     }
 }

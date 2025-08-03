@@ -65,9 +65,11 @@ public abstract partial class PropertyEditorBase : PanelContainer
     }
 
     /// <summary>
-    /// 设置属性
+    /// 设置属性，控件的初始化逻辑
     /// </summary>
-    /// <param name="property">属性</param>
+    /// <param name="name">属性名</param>
+    /// <param name="type">属性类型</param>
+    /// <param name="value">属性值</param>
     public virtual void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;

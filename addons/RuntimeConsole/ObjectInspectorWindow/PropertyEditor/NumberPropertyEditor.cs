@@ -20,6 +20,7 @@ public partial class NumberPropertyEditor : PropertyEditorBase
         if (Editable)
         {
             OnSpinBoxValueChanged(_spinBox.Value);
+            NotificationValueChanged();
         }
     }
 

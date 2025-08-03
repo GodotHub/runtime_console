@@ -61,7 +61,6 @@ public partial class EnumPropertyEditor : PropertyEditorBase
                 }
 
             }
-            NotificationValueChanged();
         }
 
         if (value is int selectedIdx)
@@ -74,8 +73,7 @@ public partial class EnumPropertyEditor : PropertyEditorBase
             {
                 if (names[i] == name)
                 {
-                    _value = Convert.ToInt64(values.GetValue(i));
-                    NotificationValueChanged();
+                    _value = Convert.ToInt64(values.GetValue(i));                    
                     break;
                 }
             }
@@ -87,6 +85,7 @@ public partial class EnumPropertyEditor : PropertyEditorBase
         if (Editable)
         {
             SetValue(_optionButton.GetSelected());
+            NotificationValueChanged();
         }
     }
 

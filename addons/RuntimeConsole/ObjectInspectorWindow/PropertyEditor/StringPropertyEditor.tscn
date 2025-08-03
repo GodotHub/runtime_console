@@ -4,6 +4,15 @@
 [ext_resource type="Script" uid="uid://d4wr6l6byp7d" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.cs" id="2_gh8xa"]
 
 [node name="StringPropertyEditor" instance=ExtResource("1_10vsn")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 396.0
+offset_bottom = 64.0
+grow_horizontal = 1
+grow_vertical = 1
+size_flags_horizontal = 1
+size_flags_vertical = 1
 script = ExtResource("2_gh8xa")
 
 [node name="PropertyEditorBase" parent="." index="0"]
