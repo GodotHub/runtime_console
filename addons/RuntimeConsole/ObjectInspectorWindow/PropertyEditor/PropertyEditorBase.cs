@@ -2,15 +2,20 @@ using Godot;
 using System;
 namespace RuntimeConsole;
 
+public delegate void PropertyChanged(object value);
+
 /// <summary>
 /// 属性编辑器基类
 /// </summary>
 public abstract partial class PropertyEditorBase : PanelContainer
 {
+
+    public event PropertyChanged ValueChanged;
+
     /// <summary>
     /// 属性名称
     /// </summary>
-    public string Property { get; private set; }
+    public string Property { get; protected set; }
 
     /// <summary>
     /// 属性类型
@@ -20,10 +25,11 @@ public abstract partial class PropertyEditorBase : PanelContainer
     /// <summary>
     /// 是否可编辑
     /// </summary>
-    public bool Editable { get; protected set; }
+    public bool Editable { get; protected set; } = true;
 
-    private Label _nameLabel;
-    private Button _submitButton;
+    protected Label _nameLabel;
+    protected Label _typeLabel;
+    protected Button _editButton;
 
     /// <summary>
     /// 获取属性值
@@ -50,23 +56,30 @@ public abstract partial class PropertyEditorBase : PanelContainer
     public override void _Ready()
     {
         _nameLabel = GetNode<Label>("%PropertyName");
-        _submitButton = GetNode<Button>("%SubmitButton");
+        _editButton = GetNode<Button>("%EditButton");
+        _typeLabel = GetNode<Label>("%PropertyType");
 
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;
-        _submitButton.Pressed += OnSubmission;
+        _editButton.Pressed += OnSubmission;
     }
 
     /// <summary>
     /// 设置属性
     /// </summary>
     /// <param name="property">属性</param>
-    public void SetProperty(string name, object value)
+    public virtual void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
+        _typeLabel.Text = type.FullName;
         Property = name;
-        PropertyType = value.GetType();
+        PropertyType = type;
         SetValue(value);
+    }
+
+    protected void NotificationValueChanged()
+    {
+        ValueChanged?.Invoke(GetValue());
     }
 
     private void OnMouseEntered()

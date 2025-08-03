@@ -30,13 +30,14 @@ public partial class NumberPropertyEditor : PropertyEditorBase
 
     public override void SetEditable(bool editable)
     {
+        _editButton.Disabled = !editable;
         _spinBox.Editable = editable;
     }
 
     public override void SetValue(object value)
     {
         _value = value;
-
+        GD.Print($"{Property}:{value.GetType()}");
         switch (value)
         {
             case sbyte sbyteValue:
@@ -63,11 +64,12 @@ public partial class NumberPropertyEditor : PropertyEditorBase
             case ulong ulongValue:
                 SetSpinBoxContent(ulongValue, ulong.MinValue, ulong.MaxValue, 1);
                 break;
-            case float floatValue:
-                SetSpinBoxContent(floatValue, float.MinValue, float.MaxValue, GetStepForFloat(floatValue));
+            case float floatValue:                
+                // 这个浮点数最小值不能改，14位有效数字，改了会忽略UI控件的值变化
+                SetSpinBoxContent(floatValue, -3.4028235E+14, float.MaxValue, GetStepForFloat(floatValue));
                 break;
             case double doubleValue:
-                SetSpinBoxContent(doubleValue, double.MinValue, double.MaxValue, GetStepForFloat((float)doubleValue));
+                SetSpinBoxContent(doubleValue, -3.4028235E+14, double.MaxValue, GetStepForFloat(doubleValue));
                 break;
             default:
                 if (value != null)
@@ -75,25 +77,25 @@ public partial class NumberPropertyEditor : PropertyEditorBase
                     // 尝试转换为double
                     if (double.TryParse(value.ToString(), out double parsedValue))
                     {
-                        SetSpinBoxContent(parsedValue, double.MinValue, double.MaxValue, 1);
+                        SetSpinBoxContent(parsedValue,  -3.4028235E+14, double.MaxValue, GetStepForFloat(parsedValue));
                         return;
                     }
                 }
                 // 默认设置
-                SetSpinBoxContent(0, double.MinValue, double.MaxValue, 1);
+                SetSpinBoxContent(0, -3.4028235E+14, double.MaxValue, 1);
                 break;
         }
     }
 
     private void SetSpinBoxContent(double value, double minValue, double maxValue, double step)
-    {
+    {        
         _spinBox.MinValue = minValue;
-        _spinBox.MaxValue = maxValue;
+        _spinBox.MaxValue = maxValue;        
         _spinBox.Step = step;
         _spinBox.Value = value;
     }
 
-    private double GetStepForFloat(float value)
+    private double GetStepForFloat(double value)
     {
         // 对于浮点数，根据数值大小动态调整步长
         if (Math.Abs(value) < 1e-3)

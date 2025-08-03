@@ -1,0 +1,74 @@
+using Godot;
+using System;
+
+namespace RuntimeConsole;
+
+/// <summary>
+/// 属性编辑器工厂类，用于根据属性类型创建相应的编辑器实例
+/// </summary>
+public static class PropertyEditorFactory
+{
+    /// <summary>
+    /// 根据属性类型创建对应的属性编辑器实例
+    /// </summary>
+    /// <param name="propertyType">属性类型</param>
+    /// <returns>对应的属性编辑器实例</returns>
+    public static PropertyEditorBase Create(Type propertyType)
+    {
+        ArgumentNullException.ThrowIfNull(propertyType);
+
+        // 布尔类型属性编辑器
+        if (propertyType == typeof(bool))
+        {
+            return CreateInstance<BoolPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/BoolPropertyEditor.tscn");
+        }
+
+        // 枚举类型属性编辑器
+        if (propertyType.IsEnum)
+        {
+            return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+        }
+
+        // 数值类型属性编辑器
+        if (IsNumericType(propertyType))
+        {
+            return CreateInstance<NumberPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/NumberPropertyEditor.tscn");
+        }
+
+        // 字符串类型属性编辑器
+        if (propertyType == typeof(string) || propertyType == typeof(StringName) || propertyType == typeof(NodePath))
+        {
+            return CreateInstance<StringPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.tscn");
+        }
+
+        // 默认使用对象属性编辑器
+        return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
+    }
+
+    /// <summary>
+    /// 从场景文件创建实例
+    /// </summary>
+    /// <typeparam name="T">编辑器类型</typeparam>
+    /// <param name="path">场景文件路径</param>
+    /// <returns>实例化的编辑器</returns>
+    private static T CreateInstance<T>(string path) where T : PropertyEditorBase
+    {
+        var scene = GD.Load<PackedScene>(path);
+        return scene.Instantiate<T>();
+    }
+
+    /// <summary>
+    /// 判断是否为数值类型
+    /// </summary>
+    /// <param name="type">要判断的类型</param>
+    /// <returns>是否为数值类型</returns>
+    private static bool IsNumericType(Type type)
+    {
+        return type == typeof(sbyte) || type == typeof(byte) ||
+               type == typeof(short) || type == typeof(ushort) ||
+               type == typeof(int) || type == typeof(uint) ||
+               type == typeof(long) || type == typeof(ulong) ||
+               type == typeof(float) || type == typeof(double) ||
+               type == typeof(decimal);
+    }
+}

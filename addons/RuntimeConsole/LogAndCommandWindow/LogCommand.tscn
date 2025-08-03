@@ -10,6 +10,10 @@ size = Vector2i(285, 100)
 visible = false
 wrap_controls = true
 always_on_top = true
+min_size = Vector2i(100, 100)
+keep_title_visible = true
+content_scale_mode = 1
+content_scale_aspect = 1
 script = ExtResource("1_egis5")
 
 [node name="IoContainer" type="VBoxContainer" parent="."]

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://j70s47qoi6ve"]
+
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_4owcv"]
+[ext_resource type="Script" uid="uid://cv7f0o8tcmh8" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.cs" id="2_8yc5c"]
+
+[node name="ObjectPropertyEditor" instance=ExtResource("1_4owcv")]
+offset_right = 309.0
+script = ExtResource("2_8yc5c")
+
+[node name="ObjectToString" type="Label" parent="PropertyEditorBase" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="EditButton" parent="PropertyEditorBase" index="3"]
+text = "Edit"

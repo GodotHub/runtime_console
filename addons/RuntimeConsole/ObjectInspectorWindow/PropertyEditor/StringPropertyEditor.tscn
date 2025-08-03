@@ -3,14 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_10vsn"]
 [ext_resource type="Script" uid="uid://d4wr6l6byp7d" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.cs" id="2_gh8xa"]
 
-[node name="PanelContainer" instance=ExtResource("1_10vsn")]
-offset_bottom = 122.0
+[node name="StringPropertyEditor" instance=ExtResource("1_10vsn")]
 script = ExtResource("2_gh8xa")
 
 [node name="PropertyEditorBase" parent="." index="0"]
 theme_override_constants/separation = 30
 
-[node name="TextEdit" type="TextEdit" parent="PropertyEditorBase" index="1"]
+[node name="ValueEditor" type="TextEdit" parent="PropertyEditorBase" index="2"]
 unique_name_in_owner = true
 clip_contents = false
 layout_mode = 2

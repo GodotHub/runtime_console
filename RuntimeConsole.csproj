@@ -3,4 +3,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+      <DefineConstants>DEBUG;TOOLS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+      <DefineConstants>RELEASE</DefineConstants>
+  </PropertyGroup>
 </Project>

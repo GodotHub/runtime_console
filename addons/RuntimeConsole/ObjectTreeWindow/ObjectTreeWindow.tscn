@@ -2,13 +2,18 @@
 
 [ext_resource type="Script" uid="uid://bxgpnrr7cxi14" path="res://addons/RuntimeConsole/ObjectTreeWindow/ObjectTreeWindow.cs" id="1_fda3t"]
 
-[node name="ObjectInspectorWindow" type="Window"]
+[node name="ObjectTreeWindow" type="Window"]
 auto_translate_mode = 1
-title = "ObjectInspector"
+title = "Object Tree"
 initial_position = 2
-size = Vector2i(710, 570)
+size = Vector2i(800, 600)
+visible = false
 wrap_controls = true
 always_on_top = true
+min_size = Vector2i(100, 100)
+keep_title_visible = true
+content_scale_mode = 1
+content_scale_aspect = 1
 script = ExtResource("1_fda3t")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
