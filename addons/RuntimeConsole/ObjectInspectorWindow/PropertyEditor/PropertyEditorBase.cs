@@ -39,7 +39,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     public abstract object GetValue();
 
     /// <summary>
-    /// 设置属性值
+    /// 设置属性值，在属性编辑器初始化时调用
     /// </summary>
     /// <param name="value">新的属性值</param>
     protected abstract void SetValue(object value);

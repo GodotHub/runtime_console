@@ -3,16 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_tkb20"]
 [ext_resource type="Script" uid="uid://dpyeqonnmv6u0" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/NumberPropertyEditor.cs" id="2_3iy0h"]
 
-[node name="NumberPropertyEditor" node_paths=PackedStringArray("_spinBox", "_nameLabel", "_typeLabel", "_editButton") instance=ExtResource("1_tkb20")]
+[node name="NumberPropertyEditor" instance=ExtResource("1_tkb20")]
 offset_right = 419.0
 script = ExtResource("2_3iy0h")
-_spinBox = NodePath("PropertyEditorBase/ValueEditor")
-_nameLabel = NodePath("PropertyEditorBase/PropertyName")
-_typeLabel = NodePath("PropertyEditorBase/PropertyType")
-_editButton = NodePath("PropertyEditorBase/EditButton")
 
 [node name="ValueEditor" type="SpinBox" parent="PropertyEditorBase" index="2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 alignment = 1

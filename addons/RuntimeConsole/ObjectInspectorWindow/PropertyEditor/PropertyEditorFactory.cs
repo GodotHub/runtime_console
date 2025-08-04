@@ -34,7 +34,7 @@ public static class PropertyEditorFactory
             else
             {
                 return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
-            }             
+            }
         }
 
         // 数值类型属性编辑器
@@ -55,6 +55,11 @@ public static class PropertyEditorFactory
             return CreateInstance<ColorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ColorPropertyEditor.tscn");
         }
 
+        // 向量/矩阵编辑器
+        if (IsVectorType(propertyType))
+        {
+            return CreateInstance<VectorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/VectorPropertyEditor.tscn");
+        }
 
         // 默认使用对象属性编辑器
         return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
@@ -85,5 +90,14 @@ public static class PropertyEditorFactory
                type == typeof(long) || type == typeof(ulong) ||
                type == typeof(float) || type == typeof(double) ||
                type == typeof(decimal);
+    }
+
+    private static bool IsVectorType(Type type)
+    {
+        return type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(Vector4) ||
+               type == typeof(Vector2I) || type == typeof(Vector3I) || type == typeof(Vector4I) ||
+               type == typeof(Quaternion) || type == typeof(Rect2) || type == typeof(Rect2I) ||
+               type == typeof(Aabb) || type == typeof(Plane) || type == typeof(Basis) ||
+               type == typeof(Transform2D) || type == typeof(Transform3D);
     }
 }
