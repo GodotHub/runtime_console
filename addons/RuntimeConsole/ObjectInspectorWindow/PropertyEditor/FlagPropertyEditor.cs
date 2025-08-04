@@ -20,7 +20,7 @@ public partial class FlagPropertyEditor : PropertyEditorBase
         _flagsContainer = GetNode<VBoxContainer>("%FlagsContainer");
     }
 
-    public override void SetProperty(string name, Type type, object value)
+    protected override void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;

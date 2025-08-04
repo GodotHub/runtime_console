@@ -6,6 +6,10 @@ using System.Collections.Generic;
 [ExtendedInspector]
 public partial class Main : Control
 {
+    [ShowInInspector]
+    double MyDouble;
+    [ShowInInspector]
+    decimal MyDecimal;
     [Export] public Vector2 vector2;
     [Export] public Vector3 vector3;
     [Export] public Vector2I vector2I;
@@ -23,10 +27,11 @@ public partial class Main : Control
     [ShowInInspector]
     List<Node> nodes { get; set; } = [];
     public override void _Ready()
-    {
+    {        
         foreach (var child in GetChildren())
         {
             nodes.Add(child);
         }
+        
     }  
 }

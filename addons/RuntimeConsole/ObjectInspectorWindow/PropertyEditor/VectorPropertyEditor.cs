@@ -296,7 +296,7 @@ public partial class VectorPropertyEditor : PropertyGroupEditor
     private void CreateChildEditor(string name, object value, bool editable = true)
     {
         var editor = PropertyEditorFactory.Create(value.GetType());
-        editor.SetProperty(name, value.GetType(), value);
+        editor.SetMemberInfo(name, value.GetType(), value, MemberType);
         editor.ValueChanged += (value) => OnChildValueChanged(editor, value);
         editor.SetEditable(editable);
         _children.AddChild(editor);

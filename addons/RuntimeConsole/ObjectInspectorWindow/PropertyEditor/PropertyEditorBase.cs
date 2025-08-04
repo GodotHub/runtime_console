@@ -12,7 +12,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
 
     public event PropertyChanged ValueChanged;
 
-    public MemberEditorType MemberType => MemberEditorType.Property;
+    public MemberEditorType MemberType { get; private set; } = MemberEditorType.Property;
 
     /// <summary>
     /// 属性名称
@@ -78,17 +78,34 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     }
 
     /// <summary>
+    /// 由外部调用，设置该控件关联的属性或字段，并进行初始化
+    /// </summary>
+    /// <param name="name">成员名</param>
+    /// <param name="type">成员类型</param>
+    /// <param name="value">成员值</param>
+    /// <param name="memberType">成员的编辑器类型，仅接收属性或字段</param>
+    /// <exception cref="ArgumentException">当指定的成员编辑器类型不为字段或属性时抛出</exception>
+    public void SetMemberInfo(string name, Type type, object value, MemberEditorType memberType)
+    {        
+        if (memberType != MemberEditorType.Property && memberType != MemberEditorType.Field)
+            throw new ArgumentException("MemberType must be Property or Field");
+
+        MemberType = memberType;
+        SetProperty(name, type, value);
+    }
+
+    /// <summary>
     /// 设置此编辑器关联的属性，控件的初始化逻辑
     /// </summary>
     /// <param name="name">属性名</param>
     /// <param name="type">属性类型</param>
     /// <param name="value">属性值</param>
-    public virtual void SetProperty(string name, Type type, object value)
+    protected virtual void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;
         MemberName = name;
-        PropertyType = type;
+        PropertyType = type;        
         SetValue(value);
     }
 

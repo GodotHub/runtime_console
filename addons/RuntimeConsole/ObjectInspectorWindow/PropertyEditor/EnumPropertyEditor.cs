@@ -29,7 +29,7 @@ public partial class EnumPropertyEditor : PropertyEditorBase
         _optionButton.Disabled = !editable;
     }
 
-    public override void SetProperty(string name, Type type, object value)
+    protected override void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;

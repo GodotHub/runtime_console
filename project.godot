@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 Console="*res://addons/RuntimeConsole/Console.tscn"
 
+[display]
+
+window/subwindows/embed_subwindows=false
+
 [dotnet]
 
 project/assembly_name="RuntimeConsole"

@@ -109,9 +109,10 @@ public partial class ObjectInspectorWindow : Window
         {
             panel.SetParent(_selectedObjects.Peek(), parentProperty);
         }
-        
+
         panel.SetObject(obj,
-            new PropertyProvider()
+            new PropertyProvider(),
+            new FieldProvider()
         );
 
         _selectedObjectsContainer.AddChild(panel);

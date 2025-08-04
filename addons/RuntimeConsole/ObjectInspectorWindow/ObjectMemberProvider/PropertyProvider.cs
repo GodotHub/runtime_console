@@ -66,7 +66,7 @@ public class PropertyProvider : IObjectMemberProvider
             }
 
             var value = propertyInfo.GetValue(obj);
-            editor.SetProperty(displayName, propertyInfo.PropertyType, value);
+            editor.SetMemberInfo(displayName, propertyInfo.PropertyType, value, MemberEditorType.Property);
             yield return editor;
         }
     }

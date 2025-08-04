@@ -74,7 +74,19 @@ public partial class ObjectMemberPanel : TabContainer
 
                         AddProperty(propertyEditor);
                         break;
-                }
+
+                    case MemberEditorType.Field:
+                        if (editor is IExpendObjectRequester fieldRequester)
+                        {
+                            // 转发事件
+                            fieldRequester.RequestCreateNewPanel += ChildRequestCreateNewPanel;
+                        }
+
+                        var fieldEditor = (PropertyEditorBase)control;
+
+                        AddField(fieldEditor);
+                        break;
+                }                
             }
         }
     }
@@ -125,6 +137,9 @@ public partial class ObjectMemberPanel : TabContainer
     /// <param name="editor">属性编辑器</param>
     public void AddProperty(PropertyEditorBase editor)
         => _propertyBox.AddChild(editor);
+
+    public void AddField(PropertyEditorBase editor)
+        => _fieldBox.AddChild(editor);
 
     /// <summary>
     /// 根据属性名称获取属性编辑器
