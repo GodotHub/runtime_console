@@ -6,15 +6,16 @@ namespace RuntimeConsole;
 
 public partial class EnumPropertyEditor : PropertyEditorBase
 {
-    private OptionButton _optionButton;
-
+    [Export] private OptionButton _optionButton;
     private long _value;
+    private string[] _enumNames;
+    private Array _enumValues;
 
     public override void _Ready()
     {
         base._Ready();
-        _optionButton = GetNode<OptionButton>("%ValueEditor");
-        _optionButton.GetPopup().AlwaysOnTop = true;
+        _optionButton ??= GetNode<OptionButton>("%ValueEditor");
+        // _optionButton.GetPopup().AlwaysOnTop = true;
     }
 
     public override object GetValue()
@@ -32,32 +33,34 @@ public partial class EnumPropertyEditor : PropertyEditorBase
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;
-        Property = name;
-        PropertyType = type;     
-        if (value is Enum)
-        {            
-            foreach (var item in Enum.GetNames(PropertyType))
+        MemberName = name;
+        PropertyType = type;
+        if (type.IsEnum)
+        {
+            _enumValues = Enum.GetValues(type);
+            _enumNames = Enum.GetNames(type);
+            foreach (var item in _enumNames)
             {
                 _optionButton.AddItem(item);
             }
         }        
+        SetValue(value);
     }
 
-    public override void SetValue(object value)
-    {
+    protected override void SetValue(object value)
+    {               
         if (value is Enum enumValue)
         {
             _value = Convert.ToInt64(enumValue);
-            var names = Enum.GetNames(PropertyType);
-            var values = Enum.GetValues(PropertyType);
 
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < _enumNames.Length; i++)
             {
-                long enumValueAsLong = Convert.ToInt64(values.GetValue(i));
+                long enumValueAsLong = Convert.ToInt64(_enumValues.GetValue(i));
 
                 if (enumValueAsLong == _value)
                 {
                     _optionButton.Select(i);
+                    break;
                 }
 
             }
@@ -65,15 +68,13 @@ public partial class EnumPropertyEditor : PropertyEditorBase
 
         if (value is int selectedIdx)
         {
-            var name = _optionButton.GetItemText(selectedIdx);
-            var names = Enum.GetNames(PropertyType);
-            var values = Enum.GetValues(PropertyType);
+            var name = _optionButton.GetItemText(selectedIdx);            
 
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < _enumNames.Length; i++)
             {
-                if (names[i] == name)
+                if (_enumNames[i] == name)
                 {
-                    _value = Convert.ToInt64(values.GetValue(i));                    
+                    _value = Convert.ToInt64(_enumValues.GetValue(i));                    
                     break;
                 }
             }
@@ -84,8 +85,13 @@ public partial class EnumPropertyEditor : PropertyEditorBase
     {
         if (Editable)
         {
-            SetValue(_optionButton.GetSelected());
-            NotificationValueChanged();
+
+            var selected = _optionButton.GetSelected();
+            if (_value != selected)
+            {
+                SetValue(selected);
+                NotificationValueChanged();
+            }
         }
     }
 

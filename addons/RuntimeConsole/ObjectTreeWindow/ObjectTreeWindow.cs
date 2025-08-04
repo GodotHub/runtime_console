@@ -246,40 +246,6 @@ public partial class ObjectTreeWindow : Window
 #endregion
 
 }
-#nullable enable
-
-/// <summary>
-/// 指示在运行时对象检查器中显示字段或属性，并可指定自定义名称。
-/// </summary>
-/// <param name="displayName">用于替代字段或属性默认名称的显示名称（可选）。</param>
-/// <remarks>
-/// 默认会显示所有公共实例成员，无需显式标记此特性，除非需要设置显示名称。<br/>
-/// 若成员为非公共或静态成员，且所在类已使用 <see cref="InspectableObjectAttribute"/> 标记，则标记此特性的成员也会被显示。<br/>
-/// 未设置 <paramref name="displayName"/> 时，使用成员原始名称。
-/// </remarks>
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-public class InspectableAttribute(string? displayName = null) : Attribute
-{
-    public string? DisplayName { get; } = displayName;
-}
-
-/// <summary>
-/// 指示该类的静态和非公共成员可在运行时对象检查器中显示。
-/// </summary>
-/// <param name="includeStatic">是否包含静态成员（默认：true）。</param>
-/// <param name="includeNonPublic">是否包含非公共成员（默认：true）。</param>
-[AttributeUsage(AttributeTargets.Class)]
-public class InspectableObjectAttribute(bool includeStatic = true, bool includeNonPublic = true) : Attribute
-{
-    public bool IncludeStatic { get; } = includeStatic;
-    public bool IncludeNonPublic { get; } = includeNonPublic;
-}
-
-/// <summary>
-/// 阻止字段或属性在运行时对象检查器中显示。
-/// </summary>
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-public class HiddenInInspectorAttribute : Attribute { }
 
 /// <summary>
 /// 阻止该类在运行时对象树中显示。

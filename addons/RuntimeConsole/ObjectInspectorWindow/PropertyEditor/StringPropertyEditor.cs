@@ -8,19 +8,22 @@ public partial class StringPropertyEditor : PropertyEditorBase
     private TextEdit _textEdit;
     private object _value;
 
-    public override void _Ready()
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
+        base.OnSceneInstantiated();
 
-        _textEdit = GetNode<TextEdit>("%ValueEditor");     
+        _textEdit ??= GetNode<TextEdit>("%ValueEditor");     
     }
 
     protected override void OnSubmission()
     {
         if (Editable)
         {            
+            var oldValue = _value;
             SetValue(_textEdit.Text);
-            NotificationValueChanged();
+
+            if (!oldValue.Equals(_value))
+                NotificationValueChanged();
         }
     }
 
@@ -34,7 +37,7 @@ public partial class StringPropertyEditor : PropertyEditorBase
         _textEdit.Editable = editable;
     }
 
-    public override void SetValue(object value)
+    protected override void SetValue(object value)
     {
         if (value is not (string or StringName or NodePath))
             return;
@@ -53,6 +56,5 @@ public partial class StringPropertyEditor : PropertyEditorBase
         {
             _value = value.ToString();
         }
-
     }
 }

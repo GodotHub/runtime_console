@@ -7,15 +7,17 @@ public delegate void PropertyChanged(object value);
 /// <summary>
 /// 属性编辑器基类
 /// </summary>
-public abstract partial class PropertyEditorBase : PanelContainer
+public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
 {
 
     public event PropertyChanged ValueChanged;
 
+    public MemberEditorType MemberType => MemberEditorType.Property;
+
     /// <summary>
     /// 属性名称
     /// </summary>
-    public string Property { get; protected set; }
+    public string MemberName { get; protected set; }
 
     /// <summary>
     /// 属性类型
@@ -40,7 +42,7 @@ public abstract partial class PropertyEditorBase : PanelContainer
     /// 设置属性值
     /// </summary>
     /// <param name="value">新的属性值</param>
-    public abstract void SetValue(object value);
+    protected abstract void SetValue(object value);
 
     /// <summary>
     /// 设置属性是否可编辑
@@ -53,7 +55,18 @@ public abstract partial class PropertyEditorBase : PanelContainer
     /// </summary>
     protected abstract void OnSubmission();
 
-    public override void _Ready()
+    public Control AsControl() => this;
+
+    public override void _Notification(int what)
+    {
+        // 场景实例化后
+        if (what == NotificationSceneInstantiated)
+        {
+            OnSceneInstantiated();
+        }
+    }
+
+    protected virtual void OnSceneInstantiated()
     {
         _nameLabel = GetNode<Label>("%PropertyName");
         _editButton = GetNode<Button>("%EditButton");
@@ -65,7 +78,7 @@ public abstract partial class PropertyEditorBase : PanelContainer
     }
 
     /// <summary>
-    /// 设置属性，控件的初始化逻辑
+    /// 设置此编辑器关联的属性，控件的初始化逻辑
     /// </summary>
     /// <param name="name">属性名</param>
     /// <param name="type">属性类型</param>
@@ -74,7 +87,7 @@ public abstract partial class PropertyEditorBase : PanelContainer
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;
-        Property = name;
+        MemberName = name;
         PropertyType = type;
         SetValue(value);
     }

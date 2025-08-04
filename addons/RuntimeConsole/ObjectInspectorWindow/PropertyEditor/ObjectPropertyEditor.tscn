@@ -13,4 +13,4 @@ layout_mode = 2
 size_flags_horizontal = 10
 
 [node name="EditButton" parent="PropertyEditorBase" index="3"]
-text = "Edit"
+text = "view"

@@ -3,9 +3,13 @@
 [ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_qyvne"]
 [ext_resource type="Script" uid="uid://dyl0aip3ao02n" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/BoolPropertyEditor.cs" id="2_0gy5j"]
 
-[node name="BoolPropertyEditor" instance=ExtResource("1_qyvne")]
+[node name="BoolPropertyEditor" node_paths=PackedStringArray("_checkBox", "_nameLabel", "_typeLabel", "_editButton") instance=ExtResource("1_qyvne")]
 offset_right = 398.0
 script = ExtResource("2_0gy5j")
+_checkBox = NodePath("PropertyEditorBase/ValueEditor")
+_nameLabel = NodePath("PropertyEditorBase/PropertyName")
+_typeLabel = NodePath("PropertyEditorBase/PropertyType")
+_editButton = NodePath("PropertyEditorBase/EditButton")
 
 [node name="ValueEditor" type="CheckBox" parent="PropertyEditorBase" index="2"]
 unique_name_in_owner = true

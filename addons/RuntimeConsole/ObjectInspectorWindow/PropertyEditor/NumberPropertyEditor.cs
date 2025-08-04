@@ -8,19 +8,23 @@ public partial class NumberPropertyEditor : PropertyEditorBase
     private SpinBox _spinBox;
     private object _value;
 
-    public override void _Ready()
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
-        _spinBox = GetNode<SpinBox>("%ValueEditor");        
-
+        base.OnSceneInstantiated();
+        _spinBox = GetNode<SpinBox>("%ValueEditor");
+        var lineEdit = _spinBox.GetLineEdit();
+        lineEdit.ContextMenuEnabled = false;        
     }
 
     protected override void OnSubmission()
     {
         if (Editable)
         {
+            var oldValue = _value;
             OnSpinBoxValueChanged(_spinBox.Value);
-            NotificationValueChanged();
+
+            if (!_value.Equals(oldValue))
+                NotificationValueChanged();
         }
     }
 
@@ -35,10 +39,10 @@ public partial class NumberPropertyEditor : PropertyEditorBase
         _spinBox.Editable = editable;
     }
 
-    public override void SetValue(object value)
+    protected override void SetValue(object value)
     {
         _value = value;
-        GD.Print($"{Property}:{value.GetType()}");
+        
         switch (value)
         {
             case sbyte sbyteValue:
@@ -71,6 +75,9 @@ public partial class NumberPropertyEditor : PropertyEditorBase
                 break;
             case double doubleValue:
                 SetSpinBoxContent(doubleValue, -3.4028235E+14, double.MaxValue, GetStepForFloat(doubleValue));
+                break;
+            case decimal decimalValue:
+                SetSpinBoxContent((double)decimalValue, -3.4028235E+14, double.MaxValue, GetStepForFloat((double)decimalValue));
                 break;
             default:
                 if (value != null)

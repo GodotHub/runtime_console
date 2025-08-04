@@ -7,10 +7,10 @@ public partial class BoolPropertyEditor : PropertyEditorBase
     private CheckBox _checkBox;
     private bool _value;
 
-    public override void _Ready()
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
-        _checkBox = GetNode<CheckBox>("%ValueEditor");
+        base.OnSceneInstantiated();
+        _checkBox ??= GetNode<CheckBox>("%ValueEditor");
         _checkBox.Pressed += () => _checkBox.Text = _checkBox.ButtonPressed.ToString();
     }
 
@@ -25,7 +25,7 @@ public partial class BoolPropertyEditor : PropertyEditorBase
         _checkBox.Disabled = !editable;
     }
 
-    public override void SetValue(object value)
+    protected override void SetValue(object value)
     {
         if (value is not bool boolValue)
             return;
@@ -39,8 +39,11 @@ public partial class BoolPropertyEditor : PropertyEditorBase
     {
         if (Editable)
         {
-            SetValue(_checkBox.ButtonPressed);
-            NotificationValueChanged();
+            if (_value != _checkBox.ButtonPressed)
+            {
+                _value = _checkBox.ButtonPressed;
+                NotificationValueChanged();
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RuntimeConsole;
@@ -10,9 +11,12 @@ public partial class FlagPropertyEditor : PropertyEditorBase
     private long _flagValue;
     private long _tempFlagValue;
 
-    public override void _Ready()
+    private Array _enumValues;
+    private string[] _enumNames;
+
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
+        base.OnSceneInstantiated();
         _flagsContainer = GetNode<VBoxContainer>("%FlagsContainer");
     }
 
@@ -20,7 +24,7 @@ public partial class FlagPropertyEditor : PropertyEditorBase
     {
         _nameLabel.Text = name;
         _typeLabel.Text = type.FullName;
-        Property = name;
+        MemberName = name;
         PropertyType = type;
 
         _flagValue = Convert.ToInt64(value);
@@ -33,13 +37,13 @@ public partial class FlagPropertyEditor : PropertyEditorBase
 
         if (type.IsEnum)
         {
-            var enumValues = Enum.GetValues(type);
-            var enumNames = Enum.GetNames(type);
+            _enumValues = Enum.GetValues(type);
+            _enumNames = Enum.GetNames(type);
 
-            for (int i = 0; i < enumValues.Length; i++)
+            for (int i = 0; i < _enumValues.Length; i++)
             {
-                var enumValue = Convert.ToInt64(enumValues.GetValue(i));
-                var enumName = enumNames[i];
+                var enumValue = Convert.ToInt64(_enumValues.GetValue(i));
+                var enumName = _enumNames[i];
 
                 var checkBox = new CheckBox();
                 checkBox.Text = enumName;
@@ -77,11 +81,36 @@ public partial class FlagPropertyEditor : PropertyEditorBase
             .ForEach(child => child.Disabled = !editable);
     }
 
-    public override void SetValue(object value)
+    protected override void SetValue(object value)
     {
+        // if (!Enum.IsDefined(PropertyType, value))
+        //     return;
+
         _flagValue = Convert.ToInt64(value);
+        // _tempFlagValue = _flagValue;
+        
+        // 更新UI中的CheckBox状态
+        // UpdateCheckBoxes();
     }
 
+    // private void UpdateCheckBoxes()
+    // {
+    //     if (_flagsContainer == null || PropertyType == null)
+    //         return;
+            
+    //     var children = _flagsContainer.GetChildren();
+    //     if (children.Count() == 0)
+    //         return;
+                    
+    //     var checkBoxes = _flagsContainer.GetChildren().Cast<CheckBox>().ToList();
+        
+    //     for (int i = 0; i < _enumValues.Length && i < checkBoxes.Count; i++)
+    //     {
+    //         var enumValue = Convert.ToInt64(_enumValues.GetValue(i));
+    //         var checkBox = checkBoxes[i];
+    //         checkBox.ButtonPressed = (_flagValue & enumValue) != 0;
+    //     }
+    // }
     protected override void OnSubmission()
     {
         if (Editable)

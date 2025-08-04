@@ -49,6 +49,13 @@ public static class PropertyEditorFactory
             return CreateInstance<StringPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.tscn");
         }
 
+        // 颜色编辑器
+        if (propertyType == typeof(Color))
+        {
+            return CreateInstance<ColorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ColorPropertyEditor.tscn");
+        }
+
+
         // 默认使用对象属性编辑器
         return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
     }

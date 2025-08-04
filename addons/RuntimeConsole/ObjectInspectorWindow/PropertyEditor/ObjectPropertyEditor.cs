@@ -3,16 +3,18 @@ using System;
 
 namespace RuntimeConsole;
 
-public partial class ObjectPropertyEditor : PropertyEditorBase
+
+public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectRequester
 {
+    public event Action<object, string> RequestCreateNewPanel;
     private object _value;
     private Label _toStringLabel;
 
-    public override void _Ready()
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
+        base.OnSceneInstantiated();
         _toStringLabel = GetNode<Label>("%ObjectToString");
-   }
+    }
 
 
     public override object GetValue()
@@ -22,19 +24,21 @@ public partial class ObjectPropertyEditor : PropertyEditorBase
 
     public override void SetEditable(bool editable)
     {
-        _editButton.Disabled = !editable;
+        Editable = editable;
     }
 
-    public override void SetValue(object value)
+    protected override void SetValue(object value)
     {
         _value = value;
-        _toStringLabel.Text = value == null ? "null" :value.ToString();
-        // NotificationValueChanged();
+        _toStringLabel.Text = value == null ? "null" : value.ToString();        
     }
 
     protected override void OnSubmission()
     {
-        
+        if (_value != null)
+        {
+            RequestCreateNewPanel?.Invoke(_value, MemberName);
+        }
     }
 
 }

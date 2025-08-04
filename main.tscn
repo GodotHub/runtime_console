@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://x1dwq10mo45h"]
+[gd_scene load_steps=3 format=3 uid="uid://x1dwq10mo45h"]
 
+[ext_resource type="Script" uid="uid://dih5xqc7rbhbo" path="res://Main.cs" id="1_0xm2m"]
 [ext_resource type="Texture2D" uid="uid://vt2u5umn0n45" path="res://icon.svg" id="1_ig7tw"]
 
 [node name="Control" type="Control"]
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_0xm2m")
 
 [node name="nihao" type="Node2D" parent="."]
 
