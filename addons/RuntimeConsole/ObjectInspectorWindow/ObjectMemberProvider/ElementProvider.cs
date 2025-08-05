@@ -29,10 +29,131 @@ public class ElementProvider : IObjectMemberProvider
             return PopulateArray((Array)obj);
         }
 
-        // 处理其他集合类型（List、IList等）
-        return PopulateGenericCollection(collection, collectionType);
+        // 非泛型字典/C# 原生字典
+        if (obj is IDictionary dic)
+        {
+            return PopulateTable(dic);
+        }
+
+        // 处理字典/Godot字典
+        if (IsGenericDictionary(collectionType))
+        {
+            return PopulateGenericDictionary(obj);
+        }
+
+        // 处理List、IList
+        if (IsList(collectionType))
+        {            
+            return PopulateList(collection, collectionType);
+        }
+
+        return PopulateCollection(collection);
     }
 
+    private bool IsGenericDictionary(Type type)
+    {        
+        return type.GetInterfaces()
+            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>));        
+    }
+
+    private bool IsList(Type type)
+    {
+        return type.IsAssignableTo(typeof(IList)) || type.GetInterfaces()
+            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
+    }
+
+    // 处理其他不可编辑的集合，Stack，Queue，HashSet
+    private IEnumerable<IMemberEditor> PopulateCollection(IEnumerable collection)
+    {
+        int idx = 0;
+        foreach (var item in collection)
+        {
+            var editor = PropertyEditorFactory.Create(item?.GetType() ?? typeof(object));
+            editor.SetMemberInfo($"[{idx}]", item?.GetType() ?? typeof(object), item, MemberEditorType.Property);
+            editor.SetEditable(false);
+            yield return editor;
+
+            idx++;
+        }
+    }
+
+    // 处理非泛型字典
+    private IEnumerable<IMemberEditor> PopulateTable(IDictionary dict)
+    {
+        bool isReadOnly = dict.IsReadOnly;
+
+        foreach (DictionaryEntry entry in dict)
+        {
+            object key = entry.Key;
+            object value = entry.Value;
+
+            var valueEditor = PropertyEditorFactory.Create(value?.GetType() ?? typeof(object));
+            valueEditor.SetMemberInfo($"[{key}]", value?.GetType() ?? typeof(object), value, MemberEditorType.Property);
+
+            if (!isReadOnly)
+            {
+                var currentKey = key; // 闭包捕获当前键
+                valueEditor.ValueChanged += newValue =>
+                {
+                    try
+                    {
+                        // 直接通过接口更新 - 无反射开销
+                        dict[currentKey] = newValue;
+                    }
+                    catch (Exception ex)
+                    {
+                        GD.PrintErr($"字典键[{currentKey}]更新失败: {ex.Message}");
+                    }
+                };
+            }
+
+            yield return valueEditor;
+        }
+    }
+
+    // 处理泛型字典、Godot字典
+    private IEnumerable<IMemberEditor> PopulateGenericDictionary(object genericDict)
+    {
+        var dictType = genericDict.GetType();
+        var keyType = dictType.GetGenericArguments()[0];
+        var valueType = dictType.GetGenericArguments()[1];
+
+        // 获取Keys属性
+        var keysProp = dictType.GetProperty("Keys");
+        var keys = (IEnumerable)keysProp.GetValue(genericDict);
+
+        // 获取索引器
+        var indexer = dictType.GetProperty("Item");
+
+        foreach (var key in keys)
+        {
+            // 获取当前值
+            object value = indexer.GetValue(genericDict, new[] { key });
+
+            // 创建编辑器
+            var valueEditor = PropertyEditorFactory.Create(valueType);
+            valueEditor.SetMemberInfo($"[{key}]", valueType, value, MemberEditorType.Property);
+
+            // 设置值变更处理
+            var currentKey = key;
+            valueEditor.ValueChanged += newValue =>
+            {
+                try
+                {
+                    // 通过键更新值
+                    indexer.SetValue(genericDict, newValue, new[] { currentKey });
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr($"字典键[{currentKey}]更新失败: {ex.Message}");
+                }
+            };
+
+            yield return valueEditor;
+        }
+    }
+  
+    // 处理数组
     private IEnumerable<IMemberEditor> PopulateArray(Array array)
     {
         for (int i = 0; i < array.Length; i++)
@@ -40,12 +161,12 @@ public class ElementProvider : IObjectMemberProvider
             var value = array.GetValue(i);
             var editor = PropertyEditorFactory.Create(value?.GetType() ?? typeof(object));
             editor.SetMemberInfo($"[{i}]", value?.GetType() ?? typeof(object), value, MemberEditorType.Property);
-            
+
             // 数组总是可写（除非是只读数组）
             if (!array.IsReadOnly)
             {
                 var currentIndex = i;
-                editor.ValueChanged += newValue => 
+                editor.ValueChanged += newValue =>
                 {
                     try
                     {
@@ -57,16 +178,17 @@ public class ElementProvider : IObjectMemberProvider
                     }
                 };
             }
-            
+
             yield return editor;
         }
     }
 
+    // 处理多维数组
     private IEnumerable<IMemberEditor> PopulateMultidimensionalArray(Array array)
     {
         // 创建索引数组用于遍历所有维度
         var indices = new int[array.Rank];
-        
+
         // 设置初始索引（每个维度从0开始）
         for (int i = 0; i < indices.Length; i++)
         {
@@ -77,19 +199,19 @@ public class ElementProvider : IObjectMemberProvider
         {
             // 获取当前索引对应的值
             var value = array.GetValue(indices);
-            
+
             // 创建索引字符串表示（如 [1,2,3]）
             var indexStr = $"[{string.Join(",", indices)}]";
-            
+
             // 创建编辑器
             var editor = PropertyEditorFactory.Create(value.GetType());
             editor.SetMemberInfo(indexStr, value.GetType(), value, MemberEditorType.Property);
-            
+
             // 设置值改变事件（仅当数组可写时）
             if (!array.IsReadOnly)
             {
                 var currentIndices = (int[])indices.Clone();
-                editor.ValueChanged += newValue => 
+                editor.ValueChanged += newValue =>
                 {
                     try
                     {
@@ -101,26 +223,27 @@ public class ElementProvider : IObjectMemberProvider
                     }
                 };
             }
-            
+
             yield return editor;
-            
+
         } while (IncrementIndices(array, indices)); // 移动到下一个索引位置
     }
 
-    private IEnumerable<IMemberEditor> PopulateGenericCollection(IEnumerable collection, Type collectionType)
+    // 处理列表、Godot数组
+    private IEnumerable<IMemberEditor> PopulateList(IEnumerable collection, Type collectionType)
     {
         int idx = 0;
         bool isReadOnly = IsCollectionReadOnly(collection);
-        
+
         // 尝试获取索引器（对于支持索引的集合）
         PropertyInfo indexer = collectionType.GetProperty("Item");
         bool hasIndexer = indexer != null && indexer.CanRead && indexer.GetIndexParameters().Length == 1;
-        
+
         foreach (var item in collection)
         {
             var editor = PropertyEditorFactory.Create(item?.GetType() ?? typeof(object));
             editor.SetMemberInfo($"[{idx}]", item?.GetType() ?? typeof(object), item, MemberEditorType.Property);
-            
+
             // 为可写集合添加值变更处理
             if (!isReadOnly && hasIndexer)
             {
@@ -130,7 +253,7 @@ public class ElementProvider : IObjectMemberProvider
                     try
                     {
                         // 使用索引器设置值
-                        indexer.SetValue(collection, newValue, new object[] { currentIndex });
+                        indexer.SetValue(collection, newValue, [currentIndex]);
                     }
                     catch (Exception ex)
                     {
@@ -138,7 +261,7 @@ public class ElementProvider : IObjectMemberProvider
                     }
                 };
             }
-            
+
             idx++;
             yield return editor;
         }
@@ -176,10 +299,4 @@ public class ElementProvider : IObjectMemberProvider
         return false; // 默认可写
     }
 
-    private bool IsArrayOrList(Type type)
-    {
-        return type.IsArray || 
-            typeof(IList).IsAssignableFrom(type) || 
-            type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IList<>));
-    }
 }
