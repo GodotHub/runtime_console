@@ -34,7 +34,9 @@ public partial class StringPropertyEditor : PropertyEditorBase
 
     public override void SetEditable(bool editable)
     {
+        Editable = editable;
         _textEdit.Editable = editable;
+        _editButton.Disabled = !editable;
     }
 
     protected override void SetValue(object value)

@@ -48,7 +48,6 @@ public class FieldProvider : IObjectMemberProvider
             {
                 try { fieldInfo.SetValue(obj, value); }
                 catch (Exception ex) { GD.PrintErr($"Failed to set field '{fieldInfo.Name}': {ex.Message}"); }
-                ;
             };
 
             var value = fieldInfo.GetValue(obj);

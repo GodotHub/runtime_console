@@ -64,7 +64,8 @@ public partial class NumberPropertyEditor : PropertyEditorBase
                 SetSpinBoxContent(uintValue, uint.MinValue, uint.MaxValue, 1);
                 break;
             case long longValue:
-                SetSpinBoxContent(longValue, long.MinValue, long.MaxValue, 1);
+                // 这里也不能超过14位数
+                SetSpinBoxContent(longValue, -1e14, long.MaxValue, 1);
                 break;
             case ulong ulongValue:
                 SetSpinBoxContent(ulongValue, ulong.MinValue, ulong.MaxValue, 1);

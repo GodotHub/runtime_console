@@ -66,6 +66,12 @@ public static class PropertyEditorFactory
         if (typeof(IEnumerable).IsAssignableFrom(propertyType))
         {
             return CreateInstance<CollectionPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CollectionPropertyEditor.tscn");
+        }        
+
+        if (propertyType == typeof(Variant))
+        {
+            // 使用特殊的Variant类型编辑器来创建对应的C#类型编辑器
+            return new VariantPropertyEditor();
         }
 
         // 默认使用对象属性编辑器
