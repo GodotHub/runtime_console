@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bmopiys7m5iiq"]
+
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_ufpb0"]
+[ext_resource type="Script" uid="uid://bmebrcks6wwf6" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CollectionPropertyEditor.cs" id="2_nt2bm"]
+
+[node name="PanelContainer" instance=ExtResource("1_ufpb0")]
+script = ExtResource("2_nt2bm")
+
+[node name="EditButton" parent="PropertyEditorBase" index="2"]
+size_flags_horizontal = 10
+text = "View"

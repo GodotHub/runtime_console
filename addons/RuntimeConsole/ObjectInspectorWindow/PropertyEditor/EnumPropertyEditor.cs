@@ -11,9 +11,9 @@ public partial class EnumPropertyEditor : PropertyEditorBase
     private string[] _enumNames;
     private Array _enumValues;
 
-    public override void _Ready()
+    protected override void OnSceneInstantiated()
     {
-        base._Ready();
+        base.OnSceneInstantiated();
         _optionButton ??= GetNode<OptionButton>("%ValueEditor");
         // _optionButton.GetPopup().AlwaysOnTop = true;
     }
@@ -32,7 +32,7 @@ public partial class EnumPropertyEditor : PropertyEditorBase
     protected override void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
-        _typeLabel.Text = type.FullName;
+        _typeLabel.Text = type.ToString();
         MemberName = name;
         PropertyType = type;
         if (type.IsEnum)

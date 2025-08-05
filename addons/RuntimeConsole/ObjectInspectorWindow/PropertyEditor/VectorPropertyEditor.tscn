@@ -7,6 +7,10 @@
 offset_right = 672.0
 script = ExtResource("2_w4f26")
 
+[node name="PropertyType" parent="PropertyEditorBase" index="1"]
+custom_minimum_size = Vector2(0, 0)
+autowrap_mode = 0
+
 [node name="Children" type="VBoxContainer" parent="PropertyEditorBase" index="2"]
 unique_name_in_owner = true
 layout_mode = 2

@@ -1,6 +1,8 @@
 using Godot;
 using System;
+using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RuntimeConsole;
 
@@ -9,28 +11,37 @@ namespace RuntimeConsole;
 /// </summary>
 public partial class ObjectMemberPanel : TabContainer
 {
-    public event Action<object, string> CreateNewPanelRequested;
-    public object ParentObject { get; private set; }
-    public string ParentPropertyName { get; private set; }
-    public object CurrentObject;    
+    public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
     private ScrollContainer _property;
     private ScrollContainer _field;
     private ScrollContainer _method;
     private ScrollContainer _signal;
     private ScrollContainer _constant;
+    private ScrollContainer _element;
     private VBoxContainer _propertyBox;
     private VBoxContainer _fieldBox;
     private VBoxContainer _methodBox;
     private VBoxContainer _signalBox;
     private VBoxContainer _constantBox;
+    private VBoxContainer _elementBox;
     public override void _Notification(int what)
     {
         if (what == NotificationSceneInstantiated)
         {
             OnSceneInstantiated();
         }
+        else if (what == NotificationPredelete)
+        {
+            // 释放不在树中的选项卡
+            Node[] children = [_property, _field, _method, _signal, _constant, _element];
+            foreach (Node child in children)
+            {
+                child.QueueFree();
+            }            
+        }
     }
- 
+
+
     private void OnSceneInstantiated()
     {
         _property = GetNode<ScrollContainer>("%Property");
@@ -38,23 +49,41 @@ public partial class ObjectMemberPanel : TabContainer
         _method = GetNode<ScrollContainer>("%Method");
         _signal = GetNode<ScrollContainer>("%Signal");
         _constant = GetNode<ScrollContainer>("%Constant");
+        _element = GetNode<ScrollContainer>("%Element");
 
         _propertyBox = _property.GetChild<VBoxContainer>(0);
         _fieldBox = _field.GetChild<VBoxContainer>(0);
         _methodBox = _method.GetChild<VBoxContainer>(0);
         _signalBox = _signal.GetChild<VBoxContainer>(0);
         _constantBox = _constant.GetChild<VBoxContainer>(0);
+        _elementBox = _element.GetChild<VBoxContainer>(0);
     }
 
-    public void SetParent(object parent, string propertyName)
+    public void SetParent(string parentProperty)
     {
-        ParentObject = parent;
-        ParentPropertyName = propertyName;
+        Name = parentProperty;
     }
 
     public void SetObject(object obj, params IObjectMemberProvider[] providers)
     {
-        CurrentObject = obj;
+        // 如果是集合，则显示元素面板
+        ShowElement(typeof(IEnumerable).IsAssignableFrom(obj.GetType()));
+
+        if (obj is IEnumerable elements)
+        {
+            var provider = new ElementProvider();
+            foreach (var element in provider.Populate(obj))
+            {
+                var control = element.AsControl();
+
+                if (element is IExpendObjectRequester expendObjectRequester)
+                {
+                    expendObjectRequester.CreateNewPanelRequested += ChildRequestCreateNewPanel;
+                }
+
+                AddElement((PropertyEditorBase)control);
+            }
+        }
 
         foreach (var provider in providers)
         {
@@ -67,7 +96,7 @@ public partial class ObjectMemberPanel : TabContainer
                         if (editor is IExpendObjectRequester requester)
                         {
                             // 转发事件
-                            requester.RequestCreateNewPanel += ChildRequestCreateNewPanel;
+                            requester.CreateNewPanelRequested += ChildRequestCreateNewPanel;
                         }
 
                         var propertyEditor = (PropertyEditorBase)control;
@@ -79,21 +108,48 @@ public partial class ObjectMemberPanel : TabContainer
                         if (editor is IExpendObjectRequester fieldRequester)
                         {
                             // 转发事件
-                            fieldRequester.RequestCreateNewPanel += ChildRequestCreateNewPanel;
+                            fieldRequester.CreateNewPanelRequested += ChildRequestCreateNewPanel;
                         }
 
                         var fieldEditor = (PropertyEditorBase)control;
 
                         AddField(fieldEditor);
                         break;
-                }                
+                }
             }
         }
     }
 
-    private void ChildRequestCreateNewPanel(object obj, string memberName)
+    private void ChildRequestCreateNewPanel(PropertyEditorBase sender, object obj)
     {
-        CreateNewPanelRequested?.Invoke(obj, memberName);
+        CreateNewPanelRequested?.Invoke(sender, obj);
+    }
+
+    private void ShowMemberPanel(ScrollContainer memberPanel, bool show)
+    {
+        if (show)
+        {
+            if (memberPanel.GetParent() == null)
+            {
+                AddChild(memberPanel);
+            }
+        }
+        else
+        {
+            if (memberPanel.GetParent() != null)
+            {
+                RemoveChild(memberPanel);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 显示或隐藏元素面板（对于集合类型）
+    /// </summary>
+    /// <param name="show">是否显示</param>
+    public void ShowElement(bool show)
+    {
+        ShowMemberPanel(_element, show);
     }
 
     /// <summary>
@@ -101,75 +157,74 @@ public partial class ObjectMemberPanel : TabContainer
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowProperty(bool show)
-        => _property.Visible = show;
+    {
+        ShowMemberPanel(_property, show);
+    }
+
 
     /// <summary>
     /// 显示或隐藏字段面板
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowField(bool show)
-        => _field.Visible = show;
+    {
+        ShowMemberPanel(_field, show);
+    }
+
 
     /// <summary>
     /// 显示或隐藏方法面板
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowMethod(bool show)
-        => _method.Visible = show;
+    {
+        ShowMemberPanel(_method, show);
+    }
+
 
     /// <summary>
     /// 显示或隐藏信号面板
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowSignal(bool show)
-        => _signal.Visible = show;
+    {
+        ShowMemberPanel(_signal, show);
+    }
+
 
     /// <summary>
     /// 显示或隐藏常量面板
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowConstant(bool show)
-        => _constant.Visible = show;
+    {
+        ShowMemberPanel(_constant, show);
+    }
+
 
     /// <summary>
     /// 向属性面板添加一个属性
     /// </summary>
     /// <param name="editor">属性编辑器</param>
     public void AddProperty(PropertyEditorBase editor)
-        => _propertyBox.AddChild(editor);
+    {
+        _propertyBox.AddChild(editor);
+    }
+
+
+    /// <summary>
+    /// 向元素面板添加一个集合元素编辑器
+    /// </summary>
+    /// <param name="editor">复用属性编辑器充当元素编辑器</param>
+    public void AddElement(PropertyEditorBase editor)
+    {
+        _elementBox.AddChild(editor);
+    }
 
     public void AddField(PropertyEditorBase editor)
-        => _fieldBox.AddChild(editor);
-
-    /// <summary>
-    /// 根据属性名称获取属性编辑器
-    /// </summary>
-    /// <param name="name">属性名称</param>
-    /// <returns>如果成功获取则返回对应编辑器，否则返回null</returns>
-    public PropertyEditorBase GetProperty(string name)
     {
-        foreach (var child in _propertyBox.GetChildren().Cast<PropertyEditorBase>())
-        {
-            if (child.MemberName == name)
-            {
-                return child;
-            }
-        }
-        return null;
+        _fieldBox.AddChild(editor);
     }
 
-    /// <summary>
-    /// 获取指定索引处的属性编辑器
-    /// </summary>
-    /// <param name="index">索引</param>
-    /// <returns>如果成功获取则返回对应编辑器，否则返回null</returns>
-    public PropertyEditorBase GetProperty(int index)
-    {
-        var prop = _propertyBox.GetChildren().Cast<PropertyEditorBase>();
-        if (index < prop.Count())
-        {
-            return prop.ElementAt(index);
-        }
-        return null;
-    }
+
 }

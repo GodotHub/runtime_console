@@ -57,15 +57,19 @@ public partial class ObjectInspectorWindow : Window
 
 
     // 显示复杂对象的成员
-    private void OnCreateNewPanelRequested(object obj, string member)
-    {        
+    private void OnCreateNewPanelRequested(PropertyEditorBase sender, object obj)
+    {
         if (obj is Node node)
         {
-            ShowNodeMembers(node, member, node.Name);
+            ShowNodeMembers(node, sender.MemberName, string.IsNullOrEmpty(node.Name) ? sender.MemberName : node.Name);
+        }
+        else if (sender is CollectionPropertyEditor)
+        {     
+            ShowObjectMembers(obj, sender.MemberName);
         }
         else
         {
-            ShowObjectMembers(obj, member);
+            ShowObjectMembers(obj, sender.MemberName);
         }
         _selectedObjectsContainer.SelectNextAvailable();
     }
@@ -92,7 +96,7 @@ public partial class ObjectInspectorWindow : Window
         _objName.Text = displayText;
         _objRID.Text = obj is Node node
             ? $"{node.GetClass()}<#{node.GetInstanceId()}>" 
-            : $"{obj.GetType().FullName} : {obj}";
+            : $"{obj.GetType()} : {obj}";
     }
 
 
@@ -107,7 +111,7 @@ public partial class ObjectInspectorWindow : Window
 
         if (_selectedObjects.Count > 0)
         {
-            panel.SetParent(_selectedObjects.Peek(), parentProperty);
+            panel.SetParent(parentProperty);
         }
 
         panel.SetObject(obj,

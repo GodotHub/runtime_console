@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections;
 using System.Reflection;
 
 namespace RuntimeConsole;
@@ -59,6 +60,12 @@ public static class PropertyEditorFactory
         if (IsVectorType(propertyType))
         {
             return CreateInstance<VectorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/VectorPropertyEditor.tscn");
+        }
+
+        // 集合类型
+        if (typeof(IEnumerable).IsAssignableFrom(propertyType))
+        {
+            return CreateInstance<CollectionPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CollectionPropertyEditor.tscn");
         }
 
         // 默认使用对象属性编辑器

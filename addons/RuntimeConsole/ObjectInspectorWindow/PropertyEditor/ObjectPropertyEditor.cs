@@ -6,7 +6,7 @@ namespace RuntimeConsole;
 
 public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectRequester
 {
-    public event Action<object, string> RequestCreateNewPanel;
+    public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
     private object _value;
     private Label _toStringLabel;
 
@@ -37,7 +37,7 @@ public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectReq
     {
         if (_value != null)
         {
-            RequestCreateNewPanel?.Invoke(_value, MemberName);
+            CreateNewPanelRequested?.Invoke(this, _value);
         }
     }
 

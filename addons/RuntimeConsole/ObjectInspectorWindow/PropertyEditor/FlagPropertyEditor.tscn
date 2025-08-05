@@ -3,13 +3,9 @@
 [ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_8nl7t"]
 [ext_resource type="Script" uid="uid://4vcebs0b6q51" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/FlagPropertyEditor.cs" id="2_4hmxc"]
 
-[node name="PanelContainer" node_paths=PackedStringArray("_flagsContainer", "_nameLabel", "_typeLabel", "_editButton") instance=ExtResource("1_8nl7t")]
+[node name="PanelContainer" instance=ExtResource("1_8nl7t")]
 offset_right = 357.0
 script = ExtResource("2_4hmxc")
-_flagsContainer = NodePath("PropertyEditorBase/FlagsContainer")
-_nameLabel = NodePath("PropertyEditorBase/PropertyName")
-_typeLabel = NodePath("PropertyEditorBase/PropertyType")
-_editButton = NodePath("PropertyEditorBase/EditButton")
 
 [node name="FlagsContainer" type="VBoxContainer" parent="PropertyEditorBase" index="2"]
 unique_name_in_owner = true

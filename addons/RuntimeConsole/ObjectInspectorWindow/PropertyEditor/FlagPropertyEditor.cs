@@ -23,7 +23,7 @@ public partial class FlagPropertyEditor : PropertyEditorBase
     protected override void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
-        _typeLabel.Text = type.FullName;
+        _typeLabel.Text = type.ToString();
         MemberName = name;
         PropertyType = type;
 

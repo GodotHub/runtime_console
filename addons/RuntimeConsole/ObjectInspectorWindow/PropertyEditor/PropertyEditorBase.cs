@@ -103,7 +103,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     protected virtual void SetProperty(string name, Type type, object value)
     {
         _nameLabel.Text = name;
-        _typeLabel.Text = type.FullName;
+        _typeLabel.Text = type.ToString();
         MemberName = name;
         PropertyType = type;        
         SetValue(value);
