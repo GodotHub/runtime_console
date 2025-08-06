@@ -85,6 +85,21 @@ public static class PropertyEditorFactory
         return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
     }
 
+    public static PropertyEditorBase CreateEnumEditorForGDScript(PropertyHint hint)
+    {
+        if (hint == PropertyHint.Enum)
+        {
+            return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+        }
+
+        if (hint == PropertyHint.Flags)
+        {
+            return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/FlagPropertyEditor.tscn");
+        }
+
+        throw new ArgumentException($"Invalid hint: {hint}, Expected: Enum or Flags");
+    }
+
     /// <summary>
     /// 从场景文件创建实例
     /// </summary>

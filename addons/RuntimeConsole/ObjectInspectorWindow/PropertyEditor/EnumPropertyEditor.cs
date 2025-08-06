@@ -1,12 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RuntimeConsole;
 
 public partial class EnumPropertyEditor : PropertyEditorBase
 {
-    [Export] private OptionButton _optionButton;
+    private OptionButton _optionButton;
     private long _value;
     private string[] _enumNames;
     private Array _enumValues;
@@ -14,8 +15,7 @@ public partial class EnumPropertyEditor : PropertyEditorBase
     protected override void OnSceneInstantiated()
     {
         base.OnSceneInstantiated();
-        _optionButton ??= GetNode<OptionButton>("%ValueEditor");
-        // _optionButton.GetPopup().AlwaysOnTop = true;
+        _optionButton ??= GetNode<OptionButton>("%ValueEditor");        
     }
 
     public override object GetValue()
@@ -35,16 +35,28 @@ public partial class EnumPropertyEditor : PropertyEditorBase
         _typeLabel.Text = type.ToString();
         MemberName = name;
         PropertyType = type;
+
+        var currentValue = value;
         if (type.IsEnum)
         {
             _enumValues = Enum.GetValues(type);
             _enumNames = Enum.GetNames(type);
-            foreach (var item in _enumNames)
-            {
-                _optionButton.AddItem(item);
-            }
-        }        
-        SetValue(value);
+
+        }
+        else if (value is ValueTuple<Dictionary<string, int>, Variant> gdsEnum) // 处理GDScript的枚举
+        {
+            var (enumDict, variant) = gdsEnum;
+            _enumValues = enumDict.Values.ToArray();
+            _enumNames = enumDict.Keys.ToArray();            
+            currentValue = variant;
+        }
+
+        foreach (var item in _enumNames)
+        {
+            _optionButton.AddItem(item);
+        }
+
+        SetValue(currentValue);
     }
 
     protected override void SetValue(object value)
@@ -66,15 +78,32 @@ public partial class EnumPropertyEditor : PropertyEditorBase
             }
         }
 
+        if (value is Variant variant)
+        {
+            _value = variant.AsInt64();
+
+            for (int i = 0; i < _enumNames.Length; i++)
+            {
+                long enumValueAsLong = Convert.ToInt64(_enumValues.GetValue(i));
+
+                if (enumValueAsLong == _value)
+                {
+                    _optionButton.Select(i);
+                    break;
+                }
+
+            }
+        }
+
         if (value is int selectedIdx)
         {
-            var name = _optionButton.GetItemText(selectedIdx);            
+            var name = _optionButton.GetItemText(selectedIdx);
 
             for (int i = 0; i < _enumNames.Length; i++)
             {
                 if (_enumNames[i] == name)
                 {
-                    _value = Convert.ToInt64(_enumValues.GetValue(i));                    
+                    _value = Convert.ToInt64(_enumValues.GetValue(i));
                     break;
                 }
             }

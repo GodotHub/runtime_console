@@ -115,8 +115,19 @@ public class ElementProvider : IObjectMemberProvider
     private IEnumerable<IMemberEditor> PopulateGenericDictionary(object genericDict)
     {
         var dictType = genericDict.GetType();
-        var keyType = dictType.GetGenericArguments()[0];
-        var valueType = dictType.GetGenericArguments()[1];
+
+        Type keyType, valueType;
+        if (dictType.GetGenericArguments().Length == 2)
+        {
+            keyType = dictType.GetGenericArguments()[0];
+            valueType = dictType.GetGenericArguments()[1];
+        }
+        else
+        {
+            // 泛型参数少于2，则认作Godot字典
+            keyType = typeof(Variant);
+            valueType = typeof(Variant);
+        }
 
         // 获取Keys属性
         var keysProp = dictType.GetProperty("Keys");

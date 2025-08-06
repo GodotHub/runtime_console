@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace RuntimeConsole;
 
@@ -12,7 +13,7 @@ public partial class ObjectInspectorWindow : Window
     private Label _objRID;
     private TabContainer _selectedObjectsContainer;
     private PackedScene _memberPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.tscn");
-    private Stack<object> _selectedObjects = [];
+    private readonly Stack<object> _selectedObjects = [];
     public override void _Ready()
     {
         Size = (Vector2I)GetTree().Root.GetViewport().GetVisibleRect().Size / 2;
@@ -56,7 +57,7 @@ public partial class ObjectInspectorWindow : Window
 
 
     // 显示复杂对象的成员
-    private void OnCreateNewPanelRequested(PropertyEditorBase sender, object obj)
+    private async void OnCreateNewPanelRequested(PropertyEditorBase sender, object obj)
     {
         if (obj is Node node)
         {
@@ -70,6 +71,10 @@ public partial class ObjectInspectorWindow : Window
         {
             ShowObjectMembers(obj, sender.MemberName);
         }
+
+        // 等待一帧，等面板创建好
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+       
         _selectedObjectsContainer.SelectNextAvailable();       
         
         var lastIndex = _selectedObjectsContainer.GetChildCount() - 1;
@@ -106,7 +111,7 @@ public partial class ObjectInspectorWindow : Window
     }
 
 
-    private void CreateNewPanel(object obj, string parentProperty, string displayText)
+    private async void CreateNewPanel(object obj, string parentProperty, string displayText)
     {
 
         var panel = _memberPanel.Instantiate<ObjectMemberPanel>();
@@ -121,10 +126,14 @@ public partial class ObjectInspectorWindow : Window
         }
 
         panel.SetObject(obj,
+            new GDScriptPropertyProvider(),
             new PropertyProvider(),
             new FieldProvider()
         );
 
+        // 等一帧，以防有同名面板没有释放
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        
         _selectedObjectsContainer.AddChild(panel);
         _selectedObjects.Push(obj);
     }
