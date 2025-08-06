@@ -13,5 +13,5 @@ public interface IObjectMemberProvider
     /// <param name="obj">对象</param>
     /// <param name="context">上下文，用以提供额外信息</param>
     /// <returns>对象成员编辑器</returns>    
-    IEnumerable<IMemberEditor> Populate(object obj);
+    IEnumerable<IMemberEditor> Populate(object obj, params object[] context);
 }

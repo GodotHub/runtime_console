@@ -7,13 +7,13 @@ namespace RuntimeConsole;
 public class GDScriptPropertyProvider : IObjectMemberProvider
 {
     // 只处理GDScript成员变量
-    public IEnumerable<IMemberEditor> Populate(object obj)
+    public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
         if (obj is not GodotObject gdObj || gdObj.GetScript().Obj is not GDScript gdScript)
             yield break;
 
         var propertyList = gdScript.GetScriptPropertyList();
-        GD.Print(propertyList);
+        // GD.Print(propertyList);
         foreach (var prop in propertyList)
         {
             var propName = prop["name"].AsString();
@@ -34,6 +34,9 @@ public class GDScriptPropertyProvider : IObjectMemberProvider
             var propValue = gdObj.Get(propName);
             PropertyEditorBase editor = null;
 
+            // 注意：若枚举中存在多个枚举项具有相同的常量值，C# 反查枚举名时无法保证解析出的名称是否为用户实际书写的那个枚举名。
+            // 反查操作只会返回第一个与该值匹配的枚举项名称。
+            // 因此，在处理枚举数组或枚举字典时，若存在值重复的枚举项，将无法确保UI展示的是用户期望的枚举名。
             /*
             这里只有导出变量才能被识别为枚举，因为这样可以直接通过HintString获取到枚举值和枚举名，而不需要去使用GDScript表达式调用find_key、反射所有Godot枚举来获取枚举值和枚举名
             如果没有导出枚举变量或位标记变量，则直接当作普通的变量处理
@@ -43,7 +46,7 @@ public class GDScriptPropertyProvider : IObjectMemberProvider
             */
             if (hint == PropertyHint.Enum && type == Variant.Type.Int)
             {
-                var enumValues = GetGDScriptEnum(hintString);
+                var enumValues = GDScriptUtility.GetGDScriptEnum(hintString);
                 if (enumValues.Count > 0)
                 {
                     editor = PropertyEditorFactory.CreateEnumEditorForGDScript(hint);
@@ -55,21 +58,26 @@ public class GDScriptPropertyProvider : IObjectMemberProvider
             // 处理标志位
             else if (hint == PropertyHint.Flags && type == Variant.Type.Int)
             {
-                var flagValues = GetGDScriptFlags(hintString);
+                var flagValues = GDScriptUtility.GetGDScriptFlags(hintString);
                 if (flagValues.Count > 0)
                 {
                     editor = PropertyEditorFactory.CreateEnumEditorForGDScript(PropertyHint.Flags);
                     editor.SetMemberInfo(propName, propValue.GetType(), (flagValues, propValue), MemberEditorType.Property);
                 }
             }
-            // 枚举数组
-            else if (hint == PropertyHint.TypeString && type == Variant.Type.Array)
-            {
-
-            }
+            // 默认情况，工厂构造VariantPropertyEditor，根据Variant类型自动分派编辑器
             else
             {
                 editor = PropertyEditorFactory.Create(propValue.GetType());
+
+                // 对于枚举数组/字典的情况，传递上下文，
+                // 这里始终为true，VariantPropertyEditor也实现了这个接口，它会传递给CollectionPropertyEditor，最后交由ElementProvider处理
+                if (editor is IExpendObjectRequester requester)
+                {
+                    requester.SetContext([prop]);
+                }
+
+                // 这里的调用顺序绝对不能改！要在设置上下文之后再设置属性信息！
                 editor.SetMemberInfo(propName, propValue.GetType(), propValue, MemberEditorType.Property);
             }
 
@@ -92,54 +100,4 @@ public class GDScriptPropertyProvider : IObjectMemberProvider
         }
     }
 
-    private Dictionary<string, int> GetGDScriptFlags(string hintString)
-    {
-        // "Bit0,Bit1,Bit3,Bit4"
-        var bits = hintString.Split(',');
-        var flagsDict = new Dictionary<string, int>();
-
-        // 位标志不会受前一显式值的影响
-        var autoValue = 1;
-        foreach (var bit in bits)
-        {
-            // "Bit0:1, Bit1:4, Bit2:8"
-            var key = bit;
-            var kv = bit.Split(':');
-            var value = autoValue;
-            if (kv.Length == 2)
-            {
-                key = kv[0];
-                value = int.Parse(kv[1]);
-            }
-            flagsDict.TryAdd(key, value);
-            autoValue <<= 1;
-        }
-
-        return flagsDict;
-    }
-
-    private Dictionary<string, int> GetGDScriptEnum(string hintString)
-    {
-        // "Hello,World,Goodbye,World"
-        var keys = hintString.Split(',');
-        var enumDict = new Dictionary<string, int>();
-
-        // 枚举受前一个显式值的影响
-        var value = 0;
-        foreach (var k in keys)
-        {
-            // "Hello:1,World:2,Goodbye:3,World:4"
-            var key = k;
-            var kv = k.Split(':');
-            if (kv.Length == 2)
-            {
-                key = kv[0];
-                value = int.Parse(kv[1]);
-            }
-            enumDict.TryAdd(key, value);
-            value++;
-        }
-
-        return enumDict;
-    }
 }

@@ -11,13 +11,15 @@ using System.Reflection;
 public partial class Main : Control
 {
     [ShowInInspector]
-    List<Error> errors = [Error.Ok, Error.FileNotFound, Error.CantOpen];
+    Godot.Collections.Array<Error> godotErrors =[Error.Ok, Error.FileNotFound, Error.CantOpen];
     [ShowInInspector]
-    System.Collections.Generic.Dictionary<string, Error> errorDict = new()
+    List<PropertyUsageFlags> errors = [PropertyUsageFlags.Editor, PropertyUsageFlags.NoEditor];
+    [ShowInInspector]
+    System.Collections.Generic.Dictionary<Error, Error> errorDict = new()
     {
-        ["item1"] = Error.Ok,
-        ["item2"] = Error.Busy,
-        ["item3"] = Error.Bug
+        [Error.AlreadyExists] = Error.Ok,
+        [Error.AlreadyInUse] = Error.Busy,
+        [Error.Bug] = Error.Bug
     };
     [ShowInInspector]
     Variant variant = 1;

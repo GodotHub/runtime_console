@@ -9,6 +9,7 @@ public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectReq
     public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
     private object _value;
     private Label _toStringLabel;
+    private object[] _context;
 
     protected override void OnSceneInstantiated()
     {
@@ -37,7 +38,7 @@ public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectReq
     {
         if (_value != null)
         {
-            CreateNewPanelRequested?.Invoke(this, _value);
+            CreateNewPanelRequested?.Invoke(this, _value, _context);
         }
     }
 
@@ -46,4 +47,10 @@ public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectReq
     {
 
     }
+
+    public void SetContext(object[] context)
+    {
+        _context = context;
+    }
+
 }

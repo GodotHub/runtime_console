@@ -7,7 +7,7 @@ namespace RuntimeConsole;
 
 public class FieldProvider : IObjectMemberProvider
 {
-    public IEnumerable<IMemberEditor> Populate(object obj)
+    public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
         var type = obj.GetType();
         var attribute = type.GetCustomAttribute<ExtendedInspectorAttribute>();

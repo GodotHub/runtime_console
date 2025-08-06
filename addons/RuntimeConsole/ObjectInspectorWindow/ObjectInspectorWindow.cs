@@ -57,7 +57,7 @@ public partial class ObjectInspectorWindow : Window
 
 
     // 显示复杂对象的成员
-    private async void OnCreateNewPanelRequested(PropertyEditorBase sender, object obj)
+    private async void OnCreateNewPanelRequested(PropertyEditorBase sender, object obj, object[] context)
     {
         if (obj is Node node)
         {
@@ -65,7 +65,7 @@ public partial class ObjectInspectorWindow : Window
         }
         else if (sender is CollectionPropertyEditor)
         {
-            ShowObjectMembers(obj, sender.MemberName);
+            ShowObjectMembers(obj, sender.MemberName, context);
         }
         else
         {
@@ -87,11 +87,11 @@ public partial class ObjectInspectorWindow : Window
         }
     }
 
-    private void ShowObjectMembers(object obj, string displayText)
+    private void ShowObjectMembers(object obj, string displayText, object[] context = null)
     {
         SetTitle(obj, displayText);
 
-        CreateNewPanel(obj, displayText, displayText);
+        CreateNewPanel(obj, displayText, displayText, context);
 
     }
 
@@ -111,7 +111,7 @@ public partial class ObjectInspectorWindow : Window
     }
 
 
-    private async void CreateNewPanel(object obj, string parentProperty, string displayText)
+    private async void CreateNewPanel(object obj, string parentProperty, string displayText, object[] context = null)
     {
 
         var panel = _memberPanel.Instantiate<ObjectMemberPanel>();
@@ -126,6 +126,7 @@ public partial class ObjectInspectorWindow : Window
         }
 
         panel.SetObject(obj,
+            context,
             new GDScriptPropertyProvider(),
             new PropertyProvider(),
             new FieldProvider()

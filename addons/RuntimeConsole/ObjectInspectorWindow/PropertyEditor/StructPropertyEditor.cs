@@ -11,6 +11,7 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
     
     private object _value;
+    private object[] _context;
     private List<PropertyEditorBase> _childProperties = [];
 
     public override object GetValue()
@@ -28,7 +29,7 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     {
         if (Editable)
         {
-            CreateNewPanelRequested?.Invoke(this, _value);
+            CreateNewPanelRequested?.Invoke(this, _value, _context);
         }
     }
 
@@ -94,4 +95,8 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
         NotificationValueChanged();
     }
 
+    public void SetContext(object[] context)
+    {
+        _context = context;
+    }
 }

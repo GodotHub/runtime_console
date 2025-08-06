@@ -8,6 +8,7 @@ public partial class VariantPropertyEditor : PropertyEditorBase, IExpendObjectRe
     private Variant _value;
 
     public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
+    private object[] _context;
 
     // 这里重写父类的初始化逻辑，重写成空实现，因为该编辑器是根据构造时传入的Variant自动分派其他编辑器，不需要场景初始化
     protected override void OnSceneInstantiated()
@@ -62,8 +63,10 @@ public partial class VariantPropertyEditor : PropertyEditorBase, IExpendObjectRe
 
         // 转发事件
         if (editor is IExpendObjectRequester requester)
+        {
+            requester.SetContext(_context);
             requester.CreateNewPanelRequested += OnCreateNewPanelRequested;
-            
+        }   
         AddChild(editor);
     }
 
@@ -76,11 +79,16 @@ public partial class VariantPropertyEditor : PropertyEditorBase, IExpendObjectRe
         }
     }
 
-    private void OnCreateNewPanelRequested(PropertyEditorBase editor, object obj)
-        => CreateNewPanelRequested?.Invoke(editor, obj);
+    private void OnCreateNewPanelRequested(PropertyEditorBase editor, object obj, object[] context)
+        => CreateNewPanelRequested?.Invoke(editor, obj, context);
 
     public void OnPanelCreated(ObjectMemberPanel panel)
     {
 
+    }
+
+    public void SetContext(object[] context)
+    {
+        _context = context;
     }
 }

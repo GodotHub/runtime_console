@@ -8,12 +8,14 @@ public partial class CollectionPropertyEditor : PropertyEditorBase, IExpendObjec
 {
     public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
     private IEnumerable _value;
-    private bool _mutable;    
+
+    private object[] _context;
 
     public override object GetValue()
     {
         return _value;
     }
+
 
     public override void SetEditable(bool editable)
     {
@@ -25,7 +27,7 @@ public partial class CollectionPropertyEditor : PropertyEditorBase, IExpendObjec
     {
         if (_value != null)
         {
-            CreateNewPanelRequested?.Invoke(this, _value);
+            CreateNewPanelRequested?.Invoke(this, _value, _context);
         }
     }
 
@@ -43,4 +45,10 @@ public partial class CollectionPropertyEditor : PropertyEditorBase, IExpendObjec
     {
 
     }
+
+    public void SetContext(object[] context)
+    {
+        _context = context;
+    }
+
 }

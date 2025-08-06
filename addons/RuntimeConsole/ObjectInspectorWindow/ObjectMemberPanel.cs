@@ -65,7 +65,7 @@ public partial class ObjectMemberPanel : TabContainer
         Name = parentProperty;
     }
 
-    public void SetObject(object obj, params IObjectMemberProvider[] providers)
+    public void SetObject(object obj, object[] context = null, params IObjectMemberProvider[] providers)
     {
         // 如果是集合，则显示元素面板
         ShowElement(typeof(IEnumerable).IsAssignableFrom(obj.GetType()));
@@ -73,7 +73,7 @@ public partial class ObjectMemberPanel : TabContainer
         if (obj is IEnumerable elements)
         {
             var provider = new ElementProvider();
-            foreach (var element in provider.Populate(obj))
+            foreach (var element in provider.Populate(obj, context)) // 传递上下文，处理来自GDScript脚本的枚举数组/字典，为其提供枚举键值
             {
                 var control = element.AsControl();
 
@@ -121,9 +121,9 @@ public partial class ObjectMemberPanel : TabContainer
         }
     }
 
-    private void ChildRequestCreateNewPanel(PropertyEditorBase sender, object obj)
+    private void ChildRequestCreateNewPanel(PropertyEditorBase sender, object obj, object[] context)
     {
-        CreateNewPanelRequested?.Invoke(sender, obj);
+        CreateNewPanelRequested?.Invoke(sender, obj, context);
     }
 
     private void ShowMemberPanel(ScrollContainer memberPanel, bool show)

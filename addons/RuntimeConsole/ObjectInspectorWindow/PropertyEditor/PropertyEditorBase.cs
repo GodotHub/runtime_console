@@ -100,6 +100,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     /// <param name="name">属性名</param>
     /// <param name="type">属性类型</param>
     /// <param name="value">属性值</param>
+    /// <param name="extraInfo">初始化时的额外信息</param>
     protected virtual void SetProperty(string name, Type type, object value)
     {
         Name = name;

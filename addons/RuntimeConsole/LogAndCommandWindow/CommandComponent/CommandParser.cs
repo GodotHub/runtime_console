@@ -100,7 +100,7 @@ public class CommandParser
 					}
 
 					_parsers[type] = parser;
-					GD.Print($"Registered parser for {type} => {file}");
+					// GD.Print($"Registered parser for {type} => {file}");
 				}
 			}
 		}
