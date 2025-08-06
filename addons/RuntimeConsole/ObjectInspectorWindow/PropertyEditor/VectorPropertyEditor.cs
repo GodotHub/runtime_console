@@ -19,7 +19,7 @@ public partial class VectorPropertyEditor : PropertyGroupEditor
         _children = GetNode<VBoxContainer>("%Children");
     }
 
-    public override IEnumerable<PropertyEditorBase> GetChildProperties()
+    protected override IEnumerable<PropertyEditorBase> GetChildProperties()
     {
         return _children.GetChildren().Cast<PropertyEditorBase>();
     }

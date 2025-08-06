@@ -41,4 +41,9 @@ public partial class ObjectPropertyEditor : PropertyEditorBase, IExpendObjectReq
         }
     }
 
+    // 不需要使用新创建的面板进行操作，这里直接空实现
+    public void OnPanelCreated(ObjectMemberPanel panel)
+    {
+
+    }
 }

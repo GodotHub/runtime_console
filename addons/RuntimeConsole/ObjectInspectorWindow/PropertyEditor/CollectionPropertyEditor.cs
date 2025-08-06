@@ -38,5 +38,9 @@ public partial class CollectionPropertyEditor : PropertyEditorBase, IExpendObjec
 
         _value = (IEnumerable)value;
     }
+    
+    public void OnPanelCreated(ObjectMemberPanel panel)
+    {
 
+    }
 }

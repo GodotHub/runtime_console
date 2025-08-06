@@ -45,7 +45,7 @@ public class FieldProvider : IObjectMemberProvider
             editor.Name = displayName;
 
             editor.ValueChanged += (value) =>
-            {
+            {                
                 try { fieldInfo.SetValue(obj, value); }
                 catch (Exception ex) { GD.PrintErr($"Failed to set field '{fieldInfo.Name}': {ex.Message}"); }
             };

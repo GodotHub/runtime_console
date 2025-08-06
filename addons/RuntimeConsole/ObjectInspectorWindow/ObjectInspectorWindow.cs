@@ -11,7 +11,6 @@ public partial class ObjectInspectorWindow : Window
     private Label _objName;
     private Label _objRID;
     private TabContainer _selectedObjectsContainer;
-    private object _obj;
     private PackedScene _memberPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.tscn");
     private Stack<object> _selectedObjects = [];
     public override void _Ready()
@@ -64,14 +63,23 @@ public partial class ObjectInspectorWindow : Window
             ShowNodeMembers(node, sender.MemberName, string.IsNullOrEmpty(node.Name) ? sender.MemberName : node.Name);
         }
         else if (sender is CollectionPropertyEditor)
-        {     
+        {
             ShowObjectMembers(obj, sender.MemberName);
         }
         else
         {
             ShowObjectMembers(obj, sender.MemberName);
         }
-        _selectedObjectsContainer.SelectNextAvailable();
+        _selectedObjectsContainer.SelectNextAvailable();       
+        
+        var lastIndex = _selectedObjectsContainer.GetChildCount() - 1;
+        if (lastIndex >= 0)
+        {
+            if (_selectedObjectsContainer.GetChild(lastIndex) is ObjectMemberPanel panel)
+            {
+                ((IExpendObjectRequester)sender).OnPanelCreated(panel);
+            }
+        }
     }
 
     private void ShowObjectMembers(object obj, string displayText)
@@ -90,8 +98,6 @@ public partial class ObjectInspectorWindow : Window
             _objRID.Text = "<null>";
             return;
         }
-
-        _obj = obj;
 
         _objName.Text = displayText;
         _objRID.Text = obj is Node node

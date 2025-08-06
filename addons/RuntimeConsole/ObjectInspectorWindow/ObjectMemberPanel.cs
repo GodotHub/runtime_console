@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +38,7 @@ public partial class ObjectMemberPanel : TabContainer
             foreach (Node child in children)
             {
                 child.QueueFree();
-            }            
+            }
         }
     }
 
@@ -226,5 +227,19 @@ public partial class ObjectMemberPanel : TabContainer
         _fieldBox.AddChild(editor);
     }
 
+    public IEnumerable<PropertyEditorBase> GetProperties()
+    {
+        foreach (var child in _propertyBox.GetChildren())
+        {
+            yield return (PropertyEditorBase)child;
+        }
+    }
 
+    public IEnumerable<PropertyEditorBase> GetFields()
+    {
+        foreach (var child in _fieldBox.GetChildren())
+        {
+            yield return (PropertyEditorBase)child;
+        }
+    }
 }

@@ -10,7 +10,11 @@ using System.Reflection;
 [ExtendedInspector]
 public partial class Main : Control
 {
-     
+
+    [ShowInInspector]
+    (int Value, string Name) TestTuple = (10, "Test");
+    [ShowInInspector]
+    TestStruct testStruct = new() { Value = 10, Name = "Test", ints = [ 10, 20, 30 ] };
     [ShowInInspector]
     [Export] Variant var { get; set; } = 10;
     [ShowInInspector]
@@ -44,7 +48,7 @@ public partial class Main : Control
     [Export] Node MyNode = new();
 
     [ShowInInspector]
-    Hashtable hashtable = new() { ["item1"] = 1, ["item2"] = 2, ["item3"] = 3};
+    Hashtable hashtable = new() { ["item1"] = 1, ["item2"] = 2, ["item3"] = 3 };
     [ShowInInspector]
     Stack<int> stack = new();
     [ShowInInspector]
@@ -71,6 +75,11 @@ public partial class Main : Control
 
     }
 
-  
+    struct TestStruct
+    {
+        public int Value;
+        public string Name;
+        public int[] ints;
+    }
 }
 

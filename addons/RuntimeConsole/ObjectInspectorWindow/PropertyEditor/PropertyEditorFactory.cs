@@ -74,6 +74,13 @@ public static class PropertyEditorFactory
             return new VariantPropertyEditor();
         }
 
+        // 通用值类型编辑器
+        if (propertyType.IsValueType)
+        {
+            return CreateInstance<StructPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StructPropertyEditor.tscn");
+        }
+        
+
         // 默认使用对象属性编辑器
         return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
     }
