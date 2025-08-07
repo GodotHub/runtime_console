@@ -108,9 +108,9 @@ public partial class ArgValueEditor : HBoxContainer
                 else
                 {
                     var parseValue = GD.StrToVar(input);
-                    if (parseValue.Obj != null && parseValue.Obj.GetType() == _argType)
+                    if (parseValue.Obj != null && (parseValue.Obj.GetType() == _argType || _argType == typeof(Variant)))
                     {
-                        return parseValue.Obj;
+                        return _argType == typeof(Variant) ? parseValue : parseValue.Obj;
                     }
                 }
             }
