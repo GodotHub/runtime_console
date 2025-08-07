@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using Godot;
 
@@ -9,7 +10,8 @@ public static class MethodEditorFactory
     public static MethodEditor Create(MethodInfo methodInfo)
     {
         var editor = _methodEditorScene.Instantiate<MethodEditor>();
-        editor.SetMethodInfo(methodInfo.Name, methodInfo.ToString(), methodInfo.GetParameters().Length);
+        var parameterTypes = methodInfo.GetParameters().Select(p => p.ParameterType).ToArray();
+        editor.SetMethodInfo(methodInfo.Name, methodInfo.ToString(), parameterTypes);
         return editor;
     }
 }

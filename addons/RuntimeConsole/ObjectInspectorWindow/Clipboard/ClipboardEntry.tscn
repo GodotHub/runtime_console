@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://dn1b86aqg3bj3"]
+
+[ext_resource type="Script" uid="uid://5pkhh4swtnlh" path="res://addons/RuntimeConsole/ObjectInspectorWindow/Clipboard/ClipboardEntry.cs" id="1_j58vb"]
+
+[node name="ClipboardEntry" type="HBoxContainer"]
+script = ExtResource("1_j58vb")
+
+[node name="Index" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 2
+text = "[0]"
+
+[node name="Value" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "value"
+
+[node name="Remove" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "remove"

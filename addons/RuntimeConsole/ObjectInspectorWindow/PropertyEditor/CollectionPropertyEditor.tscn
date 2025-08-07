@@ -6,6 +6,9 @@
 [node name="PanelContainer" instance=ExtResource("1_ufpb0")]
 script = ExtResource("2_nt2bm")
 
-[node name="EditButton" parent="PropertyEditorBase" index="2"]
+[node name="PinButton" parent="PropertyEditorBase" index="2"]
 size_flags_horizontal = 10
+
+[node name="EditButton" parent="PropertyEditorBase" index="3"]
+tooltip_text = "View members and elemnts"
 text = "View"

@@ -15,7 +15,19 @@ public partial class MethodProvider : IObjectMemberProvider
             var editor = MethodEditorFactory.Create(method);
             editor.Invoke += (args) =>
             {
-                method.Invoke(obj, args);
+                try
+                {
+                    var result = method.Invoke(obj, args);
+
+                    if (editor.PinReturnValue && result != null)
+                    {
+                        Clipboard.Instance.AddEntry(result);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    GD.PrintErr(ex.ToString());
+                }
             };
 
             yield return editor;

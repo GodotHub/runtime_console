@@ -11,8 +11,10 @@ public partial class ObjectInspectorWindow : Window
     private ObjectTreeWindow _objTree;
     private Label _objName;
     private Label _objRID;
+    private Button _showClipboardButton;
     private TabContainer _selectedObjectsContainer;
-    private PackedScene _memberPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.tscn");
+    private Button _pinButton;
+    private static readonly PackedScene _memberPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.tscn");
     private readonly Stack<object> _selectedObjects = [];
     public override void _Ready()
     {
@@ -28,10 +30,28 @@ public partial class ObjectInspectorWindow : Window
         _objName = GetNode<Label>("%ObjectName");
         _objRID = GetNode<Label>("%ObjectRID");
         _selectedObjectsContainer = GetNode<TabContainer>("%SelectedObjects");
+        _showClipboardButton = GetNode<Button>("%ClipboardButton");
+        _pinButton = GetNode<Button>("%PinButton");
 
         CloseRequested += Hide;
         _objTree.NodeSelected += OnNodeSelected;
         _selectedObjectsContainer.TabChanged += OnTabChanged;
+        _showClipboardButton.Pressed += OnClipboardButtonPressed;
+        _pinButton.Pressed += OnPinButtonPressed;
+    }
+
+    private void OnClipboardButtonPressed()
+    {
+        Clipboard.Instance.Show();
+    }
+
+    private void OnPinButtonPressed()
+    {
+        var obj = _selectedObjects.Peek();
+        if (obj != null)
+        {
+            Clipboard.Instance.AddEntry(obj);
+        }    
     }
 
     private void OnTabChanged(long tabIdx)
@@ -48,9 +68,10 @@ public partial class ObjectInspectorWindow : Window
         }
     }
 
-    private void OnNodeSelected(Node node)
+    private async void OnNodeSelected(Node node)
     {
         ClearObjects();
+        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         ShowNodeMembers(node, string.Empty, node.Name);
     }
 
@@ -143,7 +164,6 @@ public partial class ObjectInspectorWindow : Window
     }
 
     // 显示Node成员
-
     private void ShowNodeMembers(Node node, string parentMember, string displayText)
     {
         SetTitle(node, node.Name);

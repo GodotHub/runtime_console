@@ -10,11 +10,13 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
 
     public MemberEditorType MemberType => MemberEditorType.Method;
     public int ArgsCount { get; private set; }
+    public bool PinReturnValue { get; private set; }
 
     public Control AsControl() => this;
     private Label _signatureLabel;
     private Button _invokeButton;
-    private PopupPanel _argsPanel = null;
+    private ArgsPanel _argsPanel = null;
+    private CheckButton _pinButton;
     private static readonly PackedScene _argsPanelScene = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/ArgsPanel.tscn");
 
     public override void _Notification(int what)
@@ -25,15 +27,17 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
         }
     }
 
-    public void SetMethodInfo(string name, string signature, int argsCount)
+    public void SetMethodInfo(string name, string signature, Type[] args)
     {
         MemberName = name;
-        ArgsCount = argsCount;
+        ArgsCount = args.Length;
         _signatureLabel.Text = signature;
         if (ArgsCount > 0)
         {
             _argsPanel = _argsPanelScene.Instantiate<ArgsPanel>();
             _argsPanel.Visible = false;
+            _argsPanel.MethodInvoked += args => Invoke?.Invoke(args);
+            _argsPanel.SetArgs(args);
             AddChild(_argsPanel);
         }
     }
@@ -42,8 +46,9 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
     {
         _signatureLabel = GetNode<Label>("%MethodSignature");
         _invokeButton = GetNode<Button>("%InvokeButton");
+        _pinButton = GetNode<CheckButton>("%PinButton");
 
-       
+        _pinButton.Toggled += enabled => PinReturnValue = enabled;
         _invokeButton.Pressed += OnInvoke;
     }
 

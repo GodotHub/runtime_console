@@ -32,6 +32,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     protected Label _nameLabel;
     protected Label _typeLabel;
     protected Button _editButton;
+    protected Button _pinButton;
 
     /// <summary>
     /// 获取属性值
@@ -71,10 +72,17 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
         _nameLabel = GetNode<Label>("%PropertyName");
         _editButton = GetNode<Button>("%EditButton");
         _typeLabel = GetNode<Label>("%PropertyType");
+        _pinButton = GetNode<Button>("%PinButton");
 
         MouseEntered += OnMouseEntered;
         MouseExited += OnMouseExited;
         _editButton.Pressed += OnSubmission;
+        _pinButton.Pressed += OnPinButtonPressed;
+    }
+
+    private void OnPinButtonPressed()
+    {
+        Clipboard.Instance.AddEntry(GetValue()); 
     }
 
     /// <summary>
@@ -86,7 +94,7 @@ public abstract partial class PropertyEditorBase : PanelContainer, IMemberEditor
     /// <param name="memberType">成员的编辑器类型，仅接收属性或字段</param>
     /// <exception cref="ArgumentException">当指定的成员编辑器类型不为字段或属性时抛出</exception>
     public void SetMemberInfo(string name, Type type, object value, MemberEditorType memberType)
-    {        
+    {
         if (memberType != MemberEditorType.Property && memberType != MemberEditorType.Field)
             throw new ArgumentException("MemberType must be Property or Field");
 
