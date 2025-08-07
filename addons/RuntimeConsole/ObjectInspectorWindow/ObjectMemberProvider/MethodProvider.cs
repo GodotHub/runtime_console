@@ -88,7 +88,7 @@ public partial class MethodProvider : IObjectMemberProvider
                 }
                 catch (Exception ex)
                 {
-                    GD.PrintErr(ex.ToString());
+                    GD.PrintErr($"Failed to invoke method '{method.Name}': {ex.Message}");
                 }
             };
 

@@ -157,6 +157,7 @@ public partial class ObjectInspectorWindow : Window
             new GDScriptPropertyProvider(),
             new PropertyProvider(),
             new FieldProvider(),
+            new GDScriptMethodProvider(),
             new MethodProvider()
         );
 

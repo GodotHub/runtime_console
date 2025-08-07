@@ -10,13 +10,21 @@ public static class VariantUtility
     {        
         ArgumentNullException.ThrowIfNull(obj);
 
-        var variantFromMethod = typeof(Variant).GetMethod("From", BindingFlags.Static | BindingFlags.Public)
-            ?.MakeGenericMethod(obj.GetType());
-        var variantValue = variantFromMethod?.Invoke(null, [obj]);
-        return variantValue != null ? (Variant)variantValue : new Variant();
+        try
+        {
+            var variantFromMethod = typeof(Variant).GetMethod("From", BindingFlags.Static | BindingFlags.Public)
+                ?.MakeGenericMethod(obj.GetType());
+            var variantValue = variantFromMethod?.Invoke(null, [obj]);
+            return variantValue != null ? (Variant)variantValue : new Variant();
+        }
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Failed to create variant from object: {ex.Message}");
+            return new Variant();
+        }
     }
 
-    public static Type GetNativeType(this Variant value) => value.VariantType switch
+    public static Type GetNativeType(Variant.Type type) => type switch
     {
         Variant.Type.Bool => typeof(bool),
         Variant.Type.Int => typeof(long),
@@ -56,6 +64,6 @@ public static class VariantUtility
         Variant.Type.PackedVector3Array => typeof(Vector3[]),
         Variant.Type.PackedColorArray => typeof(Color[]),
         Variant.Type.PackedVector4Array => typeof(Vector4[]),
-        _ => typeof(object),
+        _ => null,
     };
 }

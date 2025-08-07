@@ -66,7 +66,7 @@ public partial class ArgValueEditor : HBoxContainer
             {
                 if (Clipboard.Instance.TryGetValue(index, out var value))
                 {
-                    if (value.GetType() == _argType)
+                    if (value.GetType() == _argType || _argType == typeof(Variant))
                     {
                         return value;
                     }

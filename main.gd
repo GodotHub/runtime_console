@@ -32,8 +32,12 @@ func _ready():
     print(enumDict)
     pass
 
+func print_new_item() -> Item:
+    print(Item.new())
+    return Item.new()
+
 func foo(a, b, c):
-    pass
+    prints(a, b, c)
 
 func add(a: int, b: int) -> int:
     return a + b
