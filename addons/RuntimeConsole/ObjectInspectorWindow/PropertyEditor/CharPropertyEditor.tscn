@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://qguyoqx710nd"]
+
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_jnwpa"]
+[ext_resource type="Script" uid="uid://crx2s1xvevftr" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CharPropertyEditor.cs" id="2_mclfr"]
+
+[node name="PropertyEditor" instance=ExtResource("1_jnwpa")]
+script = ExtResource("2_mclfr")
+
+[node name="ValueEditor" type="LineEdit" parent="PropertyEditorBase" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+context_menu_enabled = false
+emoji_menu_enabled = false

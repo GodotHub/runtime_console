@@ -4,8 +4,13 @@
 [ext_resource type="Script" uid="uid://csb5moxbq081f" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StructPropertyEditor.cs" id="2_6fk7t"]
 
 [node name="PropertyEditor" instance=ExtResource("1_epjpe")]
+offset_right = 316.0
 script = ExtResource("2_6fk7t")
 
-[node name="EditButton" parent="PropertyEditorBase" index="2"]
+[node name="StructToString" type="Label" parent="PropertyEditorBase" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
 size_flags_horizontal = 10
+
+[node name="EditButton" parent="PropertyEditorBase" index="3"]
 text = "View"

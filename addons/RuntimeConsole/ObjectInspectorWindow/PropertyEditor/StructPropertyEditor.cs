@@ -13,9 +13,14 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     private object _value;
     private object[] _context;
     private List<PropertyEditorBase> _childProperties = [];
-
-    public override object GetValue()
+    private Label _toStringLabel;
+    protected override void OnSceneInstantiated()
     {
+        base.OnSceneInstantiated();
+        _toStringLabel = GetNode<Label>("%StructToString");
+    }
+    public override object GetValue()
+    {        
         return _value;
     }
 
@@ -27,7 +32,7 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
 
     protected override void OnSubmission()
     {
-        if (Editable)
+        if (_value != null)
         {
             CreateNewPanelRequested?.Invoke(this, _value, _context);
         }
@@ -36,6 +41,7 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     protected override void SetValue(object value)
     {
         _value = value;
+        _toStringLabel.Text = value == null ? "null" : value.ToString();        
     }
 
     public void OnPanelCreated(ObjectMemberPanel panel)

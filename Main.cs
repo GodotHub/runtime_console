@@ -27,7 +27,8 @@ public partial class Main : Control
     Variant variant1 = 2;
     [ShowInInspector]
     Variant variant2 = "Hello";
-    
+    [ShowInInspector]
+    [Export] char ch = '\U00000001';
     public override void _Ready()
     {
        

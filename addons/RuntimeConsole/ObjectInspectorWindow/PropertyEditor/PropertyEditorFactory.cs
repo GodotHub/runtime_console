@@ -19,6 +19,11 @@ public static class PropertyEditorFactory
     {
         ArgumentNullException.ThrowIfNull(propertyType);
 
+        if (propertyType == typeof(char))
+        {
+            return CreateInstance<CharPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CharPropertyEditor.tscn");
+        }
+
         // 布尔类型属性编辑器
         if (propertyType == typeof(bool))
         {
