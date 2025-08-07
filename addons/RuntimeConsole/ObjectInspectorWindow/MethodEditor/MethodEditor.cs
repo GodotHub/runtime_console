@@ -57,7 +57,7 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
 
     private void OnInvoke()
     {
-        if (ArgsCount > 0)
+        if (ArgsCount > 0 || GenericArgsCount > 0)
         {
             _argsPanel.Visible = true;
         }

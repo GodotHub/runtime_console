@@ -16,7 +16,7 @@ public partial class Main : Control
 
 
     }
-
+    public T GetT<T>() where T : class, new() => GetParent<T>();
     public void Hello()
     {
         GD.Print("Hello World!");
