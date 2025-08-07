@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dpsfj0bhk64ij"]
+
+[node name="ArgValueEditor" type="HBoxContainer"]
+
+[node name="ArgName" type="Label" parent="."]
+layout_mode = 2
+text = "arg name"
+
+[node name="ArgValue" type="LineEdit" parent="."]
+layout_mode = 2

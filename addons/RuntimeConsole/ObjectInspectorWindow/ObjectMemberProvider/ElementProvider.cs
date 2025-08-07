@@ -145,7 +145,7 @@ public class ElementProvider : IObjectMemberProvider
 
             if (valueEditor is IExpendObjectRequester requester && context != null)
             {
-                requester.SetContext([.. context, "element"]);// 传递上下文，追加"element"信息，指示当前是集合元素
+                requester.SetContext([.. context, "element"]);
             }
 
             valueEditor.SetMemberInfo($"[{key}]", valueType, value, MemberEditorType.Property);
@@ -261,7 +261,7 @@ public class ElementProvider : IObjectMemberProvider
             
             if (editor is IExpendObjectRequester requester && context != null)
             {
-                requester.SetContext([.. context, "element"]);// 传递上下文，追加"element"信息，指示当前是集合元素
+                requester.SetContext([.. context, "element"]);// 传递上下文，追加"element"信息，指示
             }
 
             editor.SetMemberInfo($"[{idx}]", item?.GetType() ?? typeof(object), item, MemberEditorType.Property);

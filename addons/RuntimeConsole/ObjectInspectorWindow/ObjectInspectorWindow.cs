@@ -125,18 +125,21 @@ public partial class ObjectInspectorWindow : Window
             panel.SetParent(parentProperty);
         }
 
-        panel.SetObject(obj,
-            context,
-            new GDScriptPropertyProvider(),
-            new PropertyProvider(),
-            new FieldProvider()
-        );
-
         // 等一帧，以防有同名面板没有释放
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         
         _selectedObjectsContainer.AddChild(panel);
         _selectedObjects.Push(obj);
+
+        panel.SetObject(obj,
+            context,
+            new GDScriptPropertyProvider(),
+            new PropertyProvider(),
+            new FieldProvider(),
+            new MethodProvider()
+        );
+
+        
     }
 
     // 显示Node成员

@@ -65,10 +65,11 @@ public partial class ObjectMemberPanel : TabContainer
         Name = parentProperty;
     }
 
-    public void SetObject(object obj, object[] context = null, params IObjectMemberProvider[] providers)
+    public async void SetObject(object obj, object[] context = null, params IObjectMemberProvider[] providers)
     {
         // 如果是集合，则显示元素面板
         ShowElement(typeof(IEnumerable).IsAssignableFrom(obj.GetType()));
+        SceneTree sceneTree = Engine.GetMainLoop() as SceneTree;
 
         if (obj is IEnumerable elements)
         {
@@ -88,6 +89,7 @@ public partial class ObjectMemberPanel : TabContainer
 
         foreach (var provider in providers)
         {
+            
             foreach (var editor in provider.Populate(obj))
             {
                 var control = editor.AsControl();
@@ -116,7 +118,13 @@ public partial class ObjectMemberPanel : TabContainer
 
                         AddField(fieldEditor);
                         break;
+                    case MemberEditorType.Method:
+                        var methodEditor = (MethodEditor)control;
+                        
+                        AddMethod(methodEditor);
+                        break;
                 }
+                await ToSignal(sceneTree, SceneTree.SignalName.ProcessFrame);
             }
         }
     }
@@ -225,6 +233,11 @@ public partial class ObjectMemberPanel : TabContainer
     public void AddField(PropertyEditorBase editor)
     {
         _fieldBox.AddChild(editor);
+    }
+
+    public void AddMethod(MethodEditor editor)
+    {
+        _methodBox.AddChild(editor);
     }
 
     public IEnumerable<PropertyEditorBase> GetProperties()

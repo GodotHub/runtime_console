@@ -1,3 +1,24 @@
-[gd_scene format=3 uid="uid://bbofrwdf0yq5r"]
+[gd_scene load_steps=2 format=3 uid="uid://bbofrwdf0yq5r"]
+
+[ext_resource type="Script" uid="uid://y5dwrjs8ajki" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/MethodEditor.cs" id="1_nsn1b"]
 
 [node name="MethodEditor" type="PanelContainer"]
+offset_right = 48.0
+offset_bottom = 17.0
+script = ExtResource("1_nsn1b")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="MethodSignature" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "method signature"
+
+[node name="InvokeButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+text = "Invoke"
