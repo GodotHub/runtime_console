@@ -1,9 +1,108 @@
 using System.Collections.Generic;
+using Godot;
 
 namespace RuntimeConsole;
 
 public static class GDScriptUtility
 {
+    
+    /// <summary>
+    /// 根据提示字符串判断是否为值为枚举的字典
+    /// </summary>
+    /// <param name="hintString">GDScript属性提示字符串</param>
+    /// <returns></returns>
+    public static bool IsEnumDict(string hintString)
+    {
+        // 检测形如 "KeyType;2/2:EnumName1,EnumName2:Value1,EnumName2:Value2" 的格式
+        // 前缀是 "2/" 表示 Variant.Type.Int (2), 后面是 PropertyHint.Enum (2)
+        if (string.IsNullOrEmpty(hintString))
+            return false;
+
+        var valueParts = hintString.Split(';');
+        if (valueParts.Length != 2)
+            return false;
+
+        // 分离类型类型标识和枚举键值
+        var parts = valueParts[1].Split(':');
+        if (parts.Length < 2)
+            return false;
+
+        var typeHintPart = parts[0]; // 这里获取数组类型标识：2/2
+        var typeHintTokens = typeHintPart.Split('/'); // 分离字典值类型和枚举hint
+        if (typeHintTokens.Length != 2)
+            return false;
+
+        // 索引0是元素类型，索引1是枚举hint
+        if (int.TryParse(typeHintTokens[0], out int variantType) && int.TryParse(typeHintTokens[1], out int propertyHint))
+        {
+            return variantType == (int)Variant.Type.Int && propertyHint == (int)PropertyHint.Enum;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 根据传入的提示字符串判断是否为枚举数组
+    /// </summary>
+    /// <param name="hintString">GDScript属性提示字符串</param>
+    /// <returns></returns>
+    public static bool IsFlagArray(string hintString)
+    {
+        // 检测形如 "2/6:EnumName1,EnumName2:Value1,EnumName2:Value2" 的格式
+        // 前缀是 "2/" 表示 Variant.Type.Int (2), 后面是 PropertyHint.Flags (6)
+        if (string.IsNullOrEmpty(hintString))
+            return false;
+
+        // 分离类型类型标识和枚举键值
+        var parts = hintString.Split(':');
+        if (parts.Length < 2)
+            return false;
+
+        var typeHintPart = parts[0]; // 这里获取数组类型标识：2/6
+        var typeHintTokens = typeHintPart.Split('/'); // 分离数组元素类型和枚举hint
+        if (typeHintTokens.Length != 2)
+            return false;
+
+        // 索引0是元素类型，索引1是枚举hint
+        if (int.TryParse(typeHintTokens[0], out int variantType) && int.TryParse(typeHintTokens[1], out int propertyHint))
+        {
+            return variantType == (int)Variant.Type.Int && propertyHint == (int)PropertyHint.Flags;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 根据传入的提示字符串判断是否为枚举数组
+    /// </summary>
+    /// <param name="hintString">GDScript属性提示字符串</param>
+    /// <returns></returns>
+    public static bool IsEnumArray(string hintString)
+    {
+        // 检测形如 "2/2:EnumName1,EnumName2:Value1,EnumName2:Value2" 的格式
+        // 前缀是 "2/" 表示 Variant.Type.Int (2), 后面是 PropertyHint.Enum (2)
+        if (string.IsNullOrEmpty(hintString))
+            return false;
+
+        // 分离类型类型标识和枚举键值
+        var parts = hintString.Split(':');
+        if (parts.Length < 2)
+            return false;
+
+        var typeHintPart = parts[0]; // 这里获取数组类型标识：2/2
+        var typeHintTokens = typeHintPart.Split('/'); // 分离数组元素类型和枚举hint
+        if (typeHintTokens.Length != 2)
+            return false;
+
+        // 索引0是元素类型，索引1是枚举hint
+        if (int.TryParse(typeHintTokens[0], out int variantType) && int.TryParse(typeHintTokens[1], out int propertyHint))
+        {
+            return variantType == (int)Variant.Type.Int && propertyHint == (int)PropertyHint.Enum;
+        }
+
+        return false;
+    }
+    
     /// <summary>
     /// 将传入的HintString转换为位标志键值字典
     /// </summary>
@@ -16,7 +115,7 @@ public static class GDScriptUtility
 
         if (hintString.StartsWith("2/6:"))
             hintString = hintString.Substring(4);
-            
+
         // "Bit0,Bit1,Bit3,Bit4"
         var bits = hintString.Split(',');
         var flagsDict = new Dictionary<string, int>();
