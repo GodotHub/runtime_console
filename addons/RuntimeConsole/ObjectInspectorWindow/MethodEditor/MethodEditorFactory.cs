@@ -11,7 +11,8 @@ public static class MethodEditorFactory
     {
         var editor = _methodEditorScene.Instantiate<MethodEditor>();
         var parameterTypes = methodInfo.GetParameters().Select(p => p.ParameterType).ToArray();
-        editor.SetMethodInfo(methodInfo.Name, methodInfo.ToString(), parameterTypes);
+        var genericArgsCount = methodInfo.IsGenericMethodDefinition ? methodInfo.GetGenericArguments().Length : 0;
+        editor.SetMethodInfo(methodInfo.Name, methodInfo.ToString(), parameterTypes, genericArgsCount);
         return editor;
     }
 }

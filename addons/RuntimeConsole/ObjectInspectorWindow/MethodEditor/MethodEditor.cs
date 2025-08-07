@@ -10,6 +10,7 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
 
     public MemberEditorType MemberType => MemberEditorType.Method;
     public int ArgsCount { get; private set; }
+    public int GenericArgsCount { get; private set; }
     public bool PinReturnValue { get; private set; }
 
     public Control AsControl() => this;
@@ -27,17 +28,19 @@ public partial class MethodEditor : PanelContainer, IMemberEditor
         }
     }
 
-    public void SetMethodInfo(string name, string signature, Type[] args)
+    public void SetMethodInfo(string name, string signature, Type[] args, int genericArgsCount = 0)
     {
         MemberName = name;
         ArgsCount = args.Length;
+        GenericArgsCount = genericArgsCount;
         _signatureLabel.Text = signature;
-        if (ArgsCount > 0)
+
+        if (ArgsCount > 0 || GenericArgsCount > 0)
         {
             _argsPanel = _argsPanelScene.Instantiate<ArgsPanel>();
             _argsPanel.Visible = false;
             _argsPanel.MethodInvoked += args => Invoke?.Invoke(args);
-            _argsPanel.SetArgs(args);
+            _argsPanel.SetArgs(GenericArgsCount, args);
             AddChild(_argsPanel);
         }
     }

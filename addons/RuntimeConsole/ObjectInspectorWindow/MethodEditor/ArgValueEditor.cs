@@ -9,6 +9,21 @@ public partial class ArgValueEditor : HBoxContainer
     private LineEdit _argValueEdit;
     private Type _argType;
 
+    public bool IsGenericArg
+    {
+        get => _isGenericArg;
+        set
+        {
+            _isGenericArg = value;
+            if (_isGenericArg)
+            {
+                _argTypeLabel.Text = "Generic Type: ";
+            }
+        }
+    }
+
+    private bool _isGenericArg;
+
     public override void _Notification(int what)
     {
         if (what == NotificationSceneInstantiated)
@@ -38,7 +53,7 @@ public partial class ArgValueEditor : HBoxContainer
         }
         catch (Exception ex)
         {
-            _argValueEdit.Text = ex.ToString();
+            GD.PrintErr(ex.ToString());
             return null;
         }
     }
@@ -47,13 +62,23 @@ public partial class ArgValueEditor : HBoxContainer
     {
         if (input.StartsWith('#'))
         {
-            if (int.TryParse(input.AsSpan(1), out var index) && Clipboard.Instance.TryGetValue(index, out var value) && value.GetType() == _argType)
+            if (int.TryParse(input.AsSpan(1), out var index))
             {
-                return value;
+                if (Clipboard.Instance.TryGetValue(index, out var value))
+                {
+                    if (value.GetType() == _argType)
+                    {
+                        return value;
+                    }
+                    
+                    if (IsGenericArg && value is Type && _argType == typeof(Type))
+                    {
+                        return value;
+                    }
+                }
+    
             }
         }
-
-        
         // 使用 Convert.ChangeType 进行通用类型转换
         try
         {
@@ -65,10 +90,33 @@ public partial class ArgValueEditor : HBoxContainer
         catch (Exception)
         {
             // C# 转换失败，尝试解析为Godot数据类型
-            var parseValue = GD.StrToVar(input);
-            if (parseValue.Obj != null)
+            try
             {
-                return parseValue.Obj;
+                // 特殊处理Godot类型
+                if (_argType == typeof(string) || _argType == typeof(Type))
+                {
+                    return input;
+                }
+                else if (_argType == typeof(StringName))
+                {
+                    return new StringName(input);
+                }
+                else if (_argType == typeof(NodePath))
+                {
+                    return new NodePath(input);
+                }
+                else
+                {
+                    var parseValue = GD.StrToVar(input);
+                    if (parseValue.Obj != null && parseValue.Obj.GetType() == _argType)
+                    {
+                        return parseValue.Obj;
+                    }
+                }
+            }
+            catch
+            {
+                // 忽略异常，继续抛出原始异常
             }
             
             throw;
