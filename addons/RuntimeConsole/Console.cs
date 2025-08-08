@@ -28,13 +28,19 @@ public partial class Console : Node
             ),
 
             new(
-                key:"Object Inspector",
+                key:"Object Tree",
                 window: ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectTreeWindow/ObjectTreeWindow.tscn"),
+                enabled: true
+            ),
+
+            new(
+                key:"Object Inspector",
+                window: ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectInspectorWindow.tscn"),
                 enabled: true
             ),
         ],
         CommandPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent/Commands",
-        ParameterParserPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent",
+        ParameterParserPath = "res://addons/RuntimeConsole/LogAndCommandWindow/CommandComponent/ParameterParser",
         EditorIconsTheme = ResourceLoader.Load<Theme>("res://addons/RuntimeConsole/ObjectTreeWindow/editor_icons.tres")		    
     };
     
