@@ -1,13 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://frxhm1reorqi"]
+[gd_scene load_steps=3 format=3 uid="uid://frxhm1reorqi"]
 
 [ext_resource type="Script" uid="uid://bxgpnrr7cxi14" path="res://addons/RuntimeConsole/ObjectTreeWindow/ObjectTreeWindow.cs" id="1_fda3t"]
+[ext_resource type="PackedScene" uid="uid://yclqvnv5fpxm" path="res://addons/RuntimeConsole/ObjectTreeWindow/ObjectTreeSearchBox.tscn" id="2_5n7ek"]
 
 [node name="ObjectTreeWindow" type="Window"]
 auto_translate_mode = 1
 title = "Object Tree"
 initial_position = 2
 size = Vector2i(800, 600)
-visible = false
 wrap_controls = true
 transient = true
 min_size = Vector2i(100, 100)
@@ -27,26 +27,14 @@ grow_vertical = 2
 layout_mode = 2
 alignment = 2
 
-[node name="SearchBox" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="SearchBox" parent="VBoxContainer/HBoxContainer" instance=ExtResource("2_5n7ek")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(504, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Search Nodes"
 
-[node name="PreviousMatchButton" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="RefreshButton" type="Button" parent="VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-size_flags_horizontal = 8
-text = "↑"
-
-[node name="NextMatchButton" type="Button" parent="VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-size_flags_horizontal = 8
-text = "↓"
+text = "Refresh"
 
 [node name="SceneTree" type="Tree" parent="VBoxContainer"]
 unique_name_in_owner = true
@@ -55,5 +43,4 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/custom_button_font_highlight = Color(0.77, 0.73766, 0.2849, 1)
 column_titles_visible = true
-drop_mode_flags = 3
 select_mode = 1

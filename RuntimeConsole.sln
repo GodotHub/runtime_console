@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeConsole", "RuntimeConsole.csproj", "{55115448-029B-41C3-95ED-9605F54CEA47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeConsole", "RuntimeConsole.csproj", "{FD42A21D-CEE2-425E-83A8-673D87A78EC7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 	ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{55115448-029B-41C3-95ED-9605F54CEA47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55115448-029B-41C3-95ED-9605F54CEA47}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55115448-029B-41C3-95ED-9605F54CEA47}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{55115448-029B-41C3-95ED-9605F54CEA47}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{55115448-029B-41C3-95ED-9605F54CEA47}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{55115448-029B-41C3-95ED-9605F54CEA47}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{FD42A21D-CEE2-425E-83A8-673D87A78EC7}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal

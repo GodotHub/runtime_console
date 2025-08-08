@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://3mcfbud5uc2h"]
+
+[ext_resource type="Script" uid="uid://c483mgft1eyt6" path="res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanelSearchBox.cs" id="1_qf7jx"]
+
+[node name="SearchBox" type="HBoxContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_qf7jx")
+
+[node name="LineEdit" type="LineEdit" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Members"
+
+[node name="PreviousMatchButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "<"
+
+[node name="NextMatchButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = ">"

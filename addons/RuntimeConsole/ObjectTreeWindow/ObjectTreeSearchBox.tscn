@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://yclqvnv5fpxm"]
+
+[ext_resource type="Script" uid="uid://b3hwbr77qgdfi" path="res://addons/RuntimeConsole/ObjectTreeWindow/ObjectTreeSearchBox.cs" id="1_waq68"]
+
+[node name="SearchBox" type="HBoxContainer"]
+size_flags_horizontal = 3
+script = ExtResource("1_waq68")
+
+[node name="LineEdit" type="LineEdit" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(504, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search Nodes"
+
+[node name="PreviousMatchButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "<"
+
+[node name="NextMatchButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = ">"

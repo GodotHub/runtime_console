@@ -17,8 +17,7 @@ public class EventProvider : IObjectMemberProvider
         GodotObject gdObj = obj as GodotObject;
         if (gdObj != null)
         {
-            signalList = gdObj.GetSignalList();
-            GD.Print(signalList);
+            signalList = gdObj.GetSignalList();            
         }
         foreach (var eventInfo in events)
         {

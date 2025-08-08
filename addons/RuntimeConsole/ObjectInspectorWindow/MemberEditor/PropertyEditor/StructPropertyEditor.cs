@@ -47,8 +47,6 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     public void OnPanelCreated(ObjectMemberPanel panel)
     {
         _childProperties.Clear();
-        panel.ShowMethod(false);
-        panel.ShowEvent(false);
         panel.ShowElement(false);
 
         foreach (var prop in panel.GetProperties())
@@ -69,7 +67,7 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
         return _childProperties;
     }
 
-    protected override void OnChildValueChanged(PropertyEditorBase sender, object value)
+    protected override void OnChildValueChanged(PropertyEditorBase _, object value)
     {        
         var newInstance = Activator.CreateInstance(PropertyType);
         foreach (var child in _childProperties)

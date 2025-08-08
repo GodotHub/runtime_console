@@ -1,33 +1,50 @@
-[gd_scene load_steps=2 format=3 uid="uid://ehjohkqkl3ns"]
+[gd_scene load_steps=3 format=3 uid="uid://ehjohkqkl3ns"]
 
 [ext_resource type="Script" uid="uid://cq0otoabcpltd" path="res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.cs" id="1_j2pdt"]
+[ext_resource type="PackedScene" uid="uid://3mcfbud5uc2h" path="res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanelSearchBox.tscn" id="2_4nn87"]
 
-[node name="ObjName" type="TabContainer"]
+[node name="ObjectMemberPanel" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_j2pdt")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SearchBox" parent="HBoxContainer" instance=ExtResource("2_4nn87")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RefreshButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh"
+
+[node name="ObjectMembers" type="TabContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 all_tabs_in_front = true
-script = ExtResource("1_j2pdt")
 metadata/_tab_index = 0
 
-[node name="Element" type="ScrollContainer" parent="."]
+[node name="Element" type="ScrollContainer" parent="ObjectMembers"]
 unique_name_in_owner = true
 layout_mode = 2
 follow_focus = true
 draw_focus_border = true
 metadata/_tab_index = 0
 
-[node name="ElementContainer" type="VBoxContainer" parent="Element"]
+[node name="ElementContainer" type="VBoxContainer" parent="ObjectMembers/Element"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 15
 
-[node name="Property" type="ScrollContainer" parent="."]
+[node name="Property" type="ScrollContainer" parent="ObjectMembers"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -35,13 +52,13 @@ follow_focus = true
 draw_focus_border = true
 metadata/_tab_index = 1
 
-[node name="PropertyContainer" type="VBoxContainer" parent="Property"]
+[node name="PropertyContainer" type="VBoxContainer" parent="ObjectMembers/Property"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 15
 
-[node name="Field" type="ScrollContainer" parent="."]
+[node name="Field" type="ScrollContainer" parent="ObjectMembers"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -49,12 +66,12 @@ follow_focus = true
 draw_focus_border = true
 metadata/_tab_index = 2
 
-[node name="FieldContainer" type="VBoxContainer" parent="Field"]
+[node name="FieldContainer" type="VBoxContainer" parent="ObjectMembers/Field"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Method" type="ScrollContainer" parent="."]
+[node name="Method" type="ScrollContainer" parent="ObjectMembers"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -62,12 +79,12 @@ follow_focus = true
 draw_focus_border = true
 metadata/_tab_index = 3
 
-[node name="MethodContainer" type="VBoxContainer" parent="Method"]
+[node name="MethodContainer" type="VBoxContainer" parent="ObjectMembers/Method"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Signal" type="ScrollContainer" parent="."]
+[node name="Signal" type="ScrollContainer" parent="ObjectMembers"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -75,6 +92,6 @@ follow_focus = true
 draw_focus_border = true
 metadata/_tab_index = 4
 
-[node name="SignalContainer" type="VBoxContainer" parent="Signal"]
+[node name="SignalContainer" type="VBoxContainer" parent="ObjectMembers/Signal"]
 unique_name_in_owner = true
 layout_mode = 2

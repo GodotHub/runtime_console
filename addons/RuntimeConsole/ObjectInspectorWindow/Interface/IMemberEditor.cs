@@ -24,5 +24,5 @@ public interface IMemberEditor
     /// 转为控件
     /// </summary>
     Control AsControl();
-
+    
 }

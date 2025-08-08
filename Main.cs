@@ -13,10 +13,18 @@ public partial class Main : Control
 {
     [Signal]
     public delegate void TestSignalEventHandler(string message);
-    
+
     private Action<string> _customEventField;
+
+    [ShowInInspector]
+    List<int> ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    [ShowInInspector]
+    TestStruct testStruct = new TestStruct()
+    {
+        a = 1,
+        b = 2
+    };
     
-   
     [EventFieldName("_customEventField")]
     public event Action<string> CustomEvent
     {
@@ -33,14 +41,14 @@ public partial class Main : Control
     {
         CustomEvent += OnCustomEvent;
         CustomEvent += GD.Print;
-        TestSignal += GD.Print;        
+        TestSignal += GD.Print;
     }
 
     public override void _Process(double delta)
     {
         if (Input.IsActionJustPressed("ui_accept"))
         {
-             _customEventField?.Invoke("Custom Event Triggered!");
+            _customEventField?.Invoke("Custom Event Triggered!");
             EmitSignalTestSignal("114514");
         }
     }
@@ -62,6 +70,12 @@ public partial class Main : Control
 
     public void World()
     {
-        GD.Print("World!");    
+        GD.Print("World!");
+    }
+    
+    struct TestStruct
+    {
+        public int a;
+        public int b;
     }
 }

@@ -96,14 +96,17 @@ public partial class ObjectInspectorWindow : Window
         // 等待一帧，等面板创建好
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
        
-        _selectedObjectsContainer.SelectNextAvailable();       
+        _selectedObjectsContainer.SelectNextAvailable();
         
         var lastIndex = _selectedObjectsContainer.GetChildCount() - 1;
         if (lastIndex >= 0)
         {
             if (_selectedObjectsContainer.GetChild(lastIndex) is ObjectMemberPanel panel)
             {
-                ((IExpendObjectRequester)sender).OnPanelCreated(panel);
+                panel.Created += () =>
+                {
+                    ((IExpendObjectRequester)sender).OnPanelCreated(panel);
+                };
             }
         }
     }
@@ -132,7 +135,7 @@ public partial class ObjectInspectorWindow : Window
     }
 
 
-    private async void CreateNewPanel(object obj, string parentProperty, string displayText, object[] context = null)
+    private async void CreateNewPanel(object obj, string parentProperty, string displayText, object[] context = null, bool push = true)
     {
 
         var panel = _memberPanel.Instantiate<ObjectMemberPanel>();
@@ -148,9 +151,11 @@ public partial class ObjectInspectorWindow : Window
 
         // 等一帧，以防有同名面板没有释放
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-        
+
         _selectedObjectsContainer.AddChild(panel);
-        _selectedObjects.Push(obj);
+
+        if (push)
+            _selectedObjects.Push(obj);
 
         panel.SetObject(obj,
             context,
@@ -161,9 +166,28 @@ public partial class ObjectInspectorWindow : Window
             new MethodProvider(),
             new GDScriptSignalProvider(),
             new EventProvider()
+        );        
+        
+        panel.RefreshRequested += OnRefreshRequested;
+    }
+
+    private void OnRefreshRequested(ObjectMemberPanel panel)
+    {
+        var currentObj = _selectedObjects.Peek();
+        var context = panel.Context;
+
+        panel.SetObject(currentObj,
+            context,
+            new GDScriptPropertyProvider(),
+            new PropertyProvider(),
+            new FieldProvider(),
+            new GDScriptMethodProvider(),
+            new MethodProvider(),
+            new GDScriptSignalProvider(),
+            new EventProvider()
         );
 
-        
+        SetTitle(currentObj, panel.Name);
     }
 
     // 显示Node成员

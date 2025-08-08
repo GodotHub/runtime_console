@@ -10,9 +10,15 @@ namespace RuntimeConsole;
 /// <summary>
 /// 显示对象成员的面板
 /// </summary>
-public partial class ObjectMemberPanel : TabContainer
+public partial class ObjectMemberPanel : VBoxContainer
 {
     public event RequestCreateNewPanelEventHandler CreateNewPanelRequested;
+    public event Action<ObjectMemberPanel> RefreshRequested;
+    public event Action Created;
+    public object[] Context { get; private set; }
+
+    private TabContainer _members;
+    private Button _refreshButton;
     private ScrollContainer _property;
     private ScrollContainer _field;
     private ScrollContainer _method;
@@ -23,6 +29,10 @@ public partial class ObjectMemberPanel : TabContainer
     private VBoxContainer _methodBox;
     private VBoxContainer _signalBox;
     private VBoxContainer _elementBox;
+
+    private ObjectMemberPanelSearchBox _searchBox;
+
+
     public override void _Notification(int what)
     {
         if (what == NotificationSceneInstantiated)
@@ -43,29 +53,49 @@ public partial class ObjectMemberPanel : TabContainer
 
     private void OnSceneInstantiated()
     {
+        _members = GetNode<TabContainer>("%ObjectMembers");
         _property = GetNode<ScrollContainer>("%Property");
         _field = GetNode<ScrollContainer>("%Field");
         _method = GetNode<ScrollContainer>("%Method");
         _signal = GetNode<ScrollContainer>("%Signal");
         _element = GetNode<ScrollContainer>("%Element");
+        _refreshButton = GetNode<Button>("%RefreshButton");
+        _searchBox = GetNode<ObjectMemberPanelSearchBox>("%SearchBox");
 
         _propertyBox = _property.GetChild<VBoxContainer>(0);
         _fieldBox = _field.GetChild<VBoxContainer>(0);
         _methodBox = _method.GetChild<VBoxContainer>(0);
         _signalBox = _signal.GetChild<VBoxContainer>(0);
         _elementBox = _element.GetChild<VBoxContainer>(0);
+
+        _refreshButton.Pressed += () => RefreshRequested?.Invoke(this);        
     }
 
-    public void SetParent(string parentProperty)
+    public async void Clear()
     {
-        Name = parentProperty;
+        Node[] boxes = [_propertyBox, _fieldBox, _methodBox, _signalBox, _elementBox];
+        foreach (Node box in boxes)
+        {
+            foreach (Node child in box.GetChildren())
+            {
+                child.QueueFree();
+            }
+        }
+
+        // 等待编辑器完全清空
+        await ToSignal(Engine.GetMainLoop() as SceneTree, SceneTree.SignalName.ProcessFrame);
     }
 
     public async void SetObject(object obj, object[] context = null, params IObjectMemberProvider[] providers)
     {
+        _refreshButton.Disabled = true;
+        SceneTree sceneTree = Engine.GetMainLoop() as SceneTree;
+
+        Clear();
+
+        Context = context;
         // 如果是集合，则显示元素面板
         ShowElement(typeof(IEnumerable).IsAssignableFrom(obj.GetType()));
-        SceneTree sceneTree = Engine.GetMainLoop() as SceneTree;
 
         if (obj is IEnumerable elements)
         {
@@ -85,7 +115,7 @@ public partial class ObjectMemberPanel : TabContainer
 
         foreach (var provider in providers)
         {
-            
+
             foreach (var editor in provider.Populate(obj))
             {
                 var control = editor.AsControl();
@@ -129,6 +159,21 @@ public partial class ObjectMemberPanel : TabContainer
                 await ToSignal(sceneTree, SceneTree.SignalName.ProcessFrame);
             }
         }
+
+        _searchBox.SetMemberEditors(
+            _elementBox.GetChildren().Cast<PropertyEditorBase>().ToList(),
+            _propertyBox.GetChildren().Cast<PropertyEditorBase>().ToList(),
+            _fieldBox.GetChildren().Cast<PropertyEditorBase>().ToList(),
+            _methodBox.GetChildren().Cast<MethodEditor>().ToList(),
+            _signalBox.GetChildren().Cast<EventEditor>().ToList()
+        );
+        _refreshButton.Disabled = false;
+        Created?.Invoke();
+    }
+
+    public void SetParent(string parent)
+    {
+        Name = parent;
     }
 
     private void ChildRequestCreateNewPanel(PropertyEditorBase sender, object obj, object[] context)
@@ -142,14 +187,14 @@ public partial class ObjectMemberPanel : TabContainer
         {
             if (memberPanel.GetParent() == null)
             {
-                AddChild(memberPanel);
+                _members.AddChild(memberPanel);
             }
         }
         else
         {
             if (memberPanel.GetParent() != null)
             {
-                RemoveChild(memberPanel);
+                _members.RemoveChild(memberPanel);
             }
         }
     }
@@ -204,6 +249,7 @@ public partial class ObjectMemberPanel : TabContainer
 
 
 
+
     /// <summary>
     /// 向属性面板添加一个属性
     /// </summary>
@@ -212,7 +258,6 @@ public partial class ObjectMemberPanel : TabContainer
     {
         _propertyBox.AddChild(editor);
     }
-
 
     /// <summary>
     /// 向元素面板添加一个集合元素编辑器
@@ -249,6 +294,7 @@ public partial class ObjectMemberPanel : TabContainer
     {
         _signalBox.AddChild(editor);
     }
+
 
     public IEnumerable<PropertyEditorBase> GetProperties()
     {

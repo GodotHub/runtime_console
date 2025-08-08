@@ -13,28 +13,18 @@ public partial class ObjectTreeWindow : Window
 
     [Signal]
     public delegate void NodeSelectedEventHandler(Node node);
-
-    private List<Type> _enumTypes = new();
+    
     private Tree _tree;
-    private LineEdit _searchBox;
-    private Button _nextMatchButton;
-    private Button _previousMatchButton;
+    private Button _refreshButton;
     private Theme _editorIcons;
-    private string _searchTerm = string.Empty;
-
-    private Color _highlightColor = new Color(0.9f, 0.7f, 0.1f); // 黄色
-    private Color _defaultColor = new Color(1, 1, 1); // 白色默认
-    private readonly List<TreeItem> _matchedItems = new();
-    private int _currentMatchIndex = -1;
-    private TreeItem _lastMatch = null;
+    private ObjectTreeSearchBox _searchBox;
     public override void _Ready()
     {
         Size = (Vector2I)GetTree().Root.GetViewport().GetVisibleRect().Size / 2;
 
         _tree = GetNode<Tree>("%SceneTree");
-        _searchBox = GetNode<LineEdit>("%SearchBox");
-        _nextMatchButton = GetNode<Button>("%NextMatchButton");
-        _previousMatchButton = GetNode<Button>("%PreviousMatchButton");
+        _refreshButton = GetNode<Button>("%RefreshButton");
+        _searchBox = GetNode<ObjectTreeSearchBox>("%SearchBox");
 
         _editorIcons = Console.GameConsole.GetConfig().EditorIconsTheme;
         if (_editorIcons == null)
@@ -51,10 +41,9 @@ public partial class ObjectTreeWindow : Window
             }
         };
 
-        _searchBox.TextChanged += OnSearchTextChanged;
-        _nextMatchButton.Pressed += OnNextMatch;
-        _previousMatchButton.Pressed += OnPreviousMatch;
+        _searchBox.MatchItemFocused += OnMatchItemFocused;
         _tree.ItemSelected += OnItemSelected;
+        _refreshButton.Pressed += FillObjectTree;
     }
 
     private void FillObjectTree()
@@ -65,6 +54,7 @@ public partial class ObjectTreeWindow : Window
 
         SetItemContent(rootItem, 0, rootNode, GetIcon(rootNode));
         CreateChildItem(rootNode, rootItem);
+        _searchBox.SetRoot(_tree.GetRoot());
     }
 
     private void CreateChildItem(Node rootNode, TreeItem parent)
@@ -85,7 +75,7 @@ public partial class ObjectTreeWindow : Window
     {
         item.SetMetadata(column, meta);
         item.SetText(column, meta.Name);
-        SetDefaultColor(item);
+        item.SetCustomColor(column, Colors.White);
         if (icon != null)
             item.SetIcon(column, icon);
     }
@@ -138,112 +128,20 @@ public partial class ObjectTreeWindow : Window
         }
     }
 
-#region 搜索功能
-    private void OnSearchTextChanged(string newText)
+    /// <summary>
+    /// 处理搜索匹配项聚焦事件
+    /// </summary>
+    /// <param name="matchItem">匹配的树项</param>
+    private void OnMatchItemFocused(TreeItem matchItem)
     {
-        _searchTerm = newText.Trim().ToLowerInvariant(); // 转换成小写
-        _matchedItems.Clear();
-        _currentMatchIndex = -1;
-
-        if (string.IsNullOrEmpty(_searchTerm))
-            return;
-
-        // 递归搜索树，收集匹配项
-        CollectMatches(_tree.GetRoot(), _matchedItems);
-
-        // 如果有匹配项，跳转到第一个匹配项
-        if (_matchedItems.Count > 0)
-        {
-            _currentMatchIndex = 0;
-            FocusOnMatch(_matchedItems[_currentMatchIndex]);
-        }
-    }
-
-    private void CollectMatches(TreeItem item, List<TreeItem> matches)
-    {
-        if (item == null) return;
-
-        var name = item.GetText(0).ToLowerInvariant(); // 转换成小写
-        // 模糊搜索（包含）
-        if (name.Contains(_searchTerm))
-            matches.Add(item);
-
-        // 递归搜索子项
-        for (int i = 0; i < item.GetChildCount(); i++)
-        {
-            CollectMatches(item.GetChild(i), matches);
-        }
-    }
-
-
-    private void SetDefaultColor(TreeItem item)
-    {
-        if (item == null) return;
-
-        item.SetCustomColor(0, _defaultColor); // 第一列
-    }
-
-    private void HighlightItem(TreeItem item)
-    {
-        if (item == null) return;
-        item.SetCustomColor(0, _highlightColor);
-        item.SetCustomColor(1, _highlightColor);
-        item.SetCustomColor(2, _highlightColor);
-    }
-
-
-    private void FocusOnMatch(TreeItem match)
-    {
-        if (match == null) return;
-
-        // 重置颜色
-        if (_lastMatch != null)
-        {
-            SetDefaultColor(_lastMatch);
-        }
-
-        // 展开父节点保证可见
-        TreeItem parent = match.GetParent();
-        while (parent != null)
-        {
-            parent.SetCollapsedRecursive(false);
-            parent = parent.GetParent();
-        }
-
+        if (matchItem == null) return;
+        
         // 选中指定项和第一列（0）
-        _tree.SetSelected(match, 0);
+        _tree.SetSelected(matchItem, 0);
 
         // 滚动到该项
-        _tree.ScrollToItem(match, true);
-
-        // 高亮文本
-        HighlightItem(match);
-
-        // 更新上一个匹配项引用
-        _lastMatch = match;
+        _tree.ScrollToItem(matchItem, true);
     }
-
-    // 下一个匹配项
-    private void OnNextMatch()
-    {
-        if (_matchedItems.Count == 0) return;
-
-        _currentMatchIndex = (_currentMatchIndex + 1) % _matchedItems.Count;
-        FocusOnMatch(_matchedItems[_currentMatchIndex]);
-    }
-
-    // 上一个匹配项
-    private void OnPreviousMatch()
-    {
-        if (_matchedItems.Count == 0) return;
-
-        _currentMatchIndex--;
-        if (_currentMatchIndex < 0)
-            _currentMatchIndex = _matchedItems.Count - 1;
-
-        FocusOnMatch(_matchedItems[_currentMatchIndex]);
-    }
-#endregion
 
 }
 
