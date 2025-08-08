@@ -7,7 +7,7 @@ namespace RuntimeConsole;
 
 public partial class MethodProvider : IObjectMemberProvider
 {    
-    public IEnumerable<IMemberEditor> Populate(object obj, params object[] context)
+    public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
         var methods = obj.GetType().GetMethods();
         

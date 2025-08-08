@@ -78,15 +78,3 @@ metadata/_tab_index = 4
 [node name="SignalContainer" type="VBoxContainer" parent="Signal"]
 unique_name_in_owner = true
 layout_mode = 2
-
-[node name="Constant" type="ScrollContainer" parent="."]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-follow_focus = true
-draw_focus_border = true
-metadata/_tab_index = 5
-
-[node name="ConstantContainer" type="VBoxContainer" parent="Constant"]
-unique_name_in_owner = true
-layout_mode = 2

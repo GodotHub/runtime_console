@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -5,7 +6,50 @@ namespace RuntimeConsole;
 
 public static class GDScriptUtility
 {
-    
+
+    public static Type GetPropertyNativeType(Godot.Collections.Dictionary info)
+    {
+        var type = info["type"].As<Variant.Type>();
+        var hint = info["hint"].As<PropertyHint>();
+        var usage = info["usage"].As<PropertyUsageFlags>();
+        var className = info["class_name"].AsString();
+        var hintString = info["hint_string"].AsString();
+
+        var nativeType = VariantUtility.GetNativeType(type);
+
+        if (type == Variant.Type.Object && !string.IsNullOrEmpty(className))
+        {
+            return ClassDB.Instantiate(className).Obj?.GetType() ?? typeof(GodotObject);
+        }
+
+        if (nativeType == null && (usage & PropertyUsageFlags.NilIsVariant) != 0)
+        {
+            return typeof(Variant);
+        }
+
+        // 处理类型化字典
+        if (type == Variant.Type.Dictionary && hint == PropertyHint.DictionaryType && !string.IsNullOrEmpty(hintString))
+        {
+            var dictType = hintString.Split(';');
+            if (dictType.Length == 2)
+            {
+                var keyTypeString = VariantUtility.GetNativeType(dictType[0]);
+                var valueTypeString = VariantUtility.GetNativeType(dictType[1]);
+
+                return typeof(Godot.Collections.Dictionary<,>).MakeGenericType(keyTypeString, valueTypeString);
+            }
+        }
+
+        // 处理类型化数组
+        if (type == Variant.Type.Array && hint == PropertyHint.ArrayType && !string.IsNullOrEmpty(hintString))
+        {
+            var elementType = VariantUtility.GetNativeType(hintString);
+            return typeof(Godot.Collections.Array<>).MakeGenericType(elementType);
+        }
+
+        return nativeType;
+    }
+
     /// <summary>
     /// 根据提示字符串判断是否为值为枚举的字典
     /// </summary>

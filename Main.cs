@@ -29,12 +29,11 @@ public partial class Main : Control
             _customEventField -= value;
         }
     }
-
     public override void _Ready()
     {
         CustomEvent += OnCustomEvent;
         CustomEvent += GD.Print;
-        TestSignal += GD.Print;
+        TestSignal += GD.Print;        
     }
 
     public override void _Process(double delta)

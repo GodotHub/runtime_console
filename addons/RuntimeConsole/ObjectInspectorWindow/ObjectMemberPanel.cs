@@ -17,13 +17,11 @@ public partial class ObjectMemberPanel : TabContainer
     private ScrollContainer _field;
     private ScrollContainer _method;
     private ScrollContainer _signal;
-    private ScrollContainer _constant;
     private ScrollContainer _element;
     private VBoxContainer _propertyBox;
     private VBoxContainer _fieldBox;
     private VBoxContainer _methodBox;
     private VBoxContainer _signalBox;
-    private VBoxContainer _constantBox;
     private VBoxContainer _elementBox;
     public override void _Notification(int what)
     {
@@ -34,7 +32,7 @@ public partial class ObjectMemberPanel : TabContainer
         else if (what == NotificationPredelete)
         {
             // 释放不在树中的选项卡
-            Node[] children = [_property, _field, _method, _signal, _constant, _element];
+            Node[] children = [_property, _field, _method, _signal, _element];
             foreach (Node child in children)
             {
                 child.QueueFree();
@@ -49,14 +47,12 @@ public partial class ObjectMemberPanel : TabContainer
         _field = GetNode<ScrollContainer>("%Field");
         _method = GetNode<ScrollContainer>("%Method");
         _signal = GetNode<ScrollContainer>("%Signal");
-        _constant = GetNode<ScrollContainer>("%Constant");
         _element = GetNode<ScrollContainer>("%Element");
 
         _propertyBox = _property.GetChild<VBoxContainer>(0);
         _fieldBox = _field.GetChild<VBoxContainer>(0);
         _methodBox = _method.GetChild<VBoxContainer>(0);
         _signalBox = _signal.GetChild<VBoxContainer>(0);
-        _constantBox = _constant.GetChild<VBoxContainer>(0);
         _elementBox = _element.GetChild<VBoxContainer>(0);
     }
 
@@ -198,7 +194,7 @@ public partial class ObjectMemberPanel : TabContainer
 
 
     /// <summary>
-    /// 显示或隐藏信号面板
+    /// 显示或隐藏信号/事件面板
     /// </summary>
     /// <param name="show">是否显示</param>
     public void ShowEvent(bool show)
@@ -206,15 +202,6 @@ public partial class ObjectMemberPanel : TabContainer
         ShowMemberPanel(_signal, show);
     }
 
-
-    /// <summary>
-    /// 显示或隐藏常量面板
-    /// </summary>
-    /// <param name="show">是否显示</param>
-    public void ShowConstant(bool show)
-    {
-        ShowMemberPanel(_constant, show);
-    }
 
 
     /// <summary>
@@ -236,16 +223,28 @@ public partial class ObjectMemberPanel : TabContainer
         _elementBox.AddChild(editor);
     }
 
+    /// <summary>
+    /// 向字段面板添加一个字段编辑器
+    /// </summary>
+    /// <param name="editor"></param>
     public void AddField(PropertyEditorBase editor)
     {
         _fieldBox.AddChild(editor);
     }
 
+    /// <summary>
+    /// 向方法面板添加一个方法编辑器
+    /// </summary>
+    /// <param name="editor">方法编辑器</param>
     public void AddMethod(MethodEditor editor)
     {
         _methodBox.AddChild(editor);
     }
 
+    /// <summary>
+    /// 向属性面板添加一个事件编辑器
+    /// </summary>
+    /// <param name="editor">事件编辑器</param>
     public void AddEvent(EventEditor editor)
     {
         _signalBox.AddChild(editor);

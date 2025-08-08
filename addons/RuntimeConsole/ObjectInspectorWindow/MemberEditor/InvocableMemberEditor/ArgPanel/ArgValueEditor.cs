@@ -127,6 +127,41 @@ public partial class ArgValueEditor : HBoxContainer
                     {
                         return _argType == typeof(Variant) ? parseValue : parseValue.Obj;
                     }
+                    // 处理类型化数组/字典
+                    if (_argType.IsGenericType)
+                    {
+                        var genericType = _argType.GetGenericTypeDefinition();
+                        if (genericType == typeof(Godot.Collections.Array<>))
+                        {
+                            var itemType = _argType.GenericTypeArguments[0];
+                            var rawArray = parseValue.AsGodotArray();
+                            var converted = Activator.CreateInstance(_argType)!;
+                            var addMethod = _argType.GetMethod("Add");
+                            foreach (var item in rawArray)
+                            {
+                                addMethod.Invoke(converted, new object[] { item.Obj });
+                            }
+                            return converted;
+                        }
+                        else if (genericType == typeof(Godot.Collections.Dictionary<,>))
+                        {
+                            var keyType = _argType.GenericTypeArguments[0];
+                            var valType = _argType.GenericTypeArguments[1];
+                            var rawDict = parseValue.AsGodotDictionary();
+                            var converted = Activator.CreateInstance(_argType)!;
+                            var addMethod = _argType.GetMethod("Add");
+                            foreach (var kv in rawDict)
+                            {
+                                addMethod.Invoke(converted, [
+                                    kv.Key.Obj,
+                                    kv.Value.Obj
+                                ]);
+                            }
+                            return converted;
+                        }
+                    }
+
+
                 }
             }
             catch

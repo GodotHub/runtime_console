@@ -9,7 +9,7 @@ public class GDScriptPropertyProvider : IObjectMemberProvider
     // 只处理GDScript成员变量
     public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
-        if (obj is not GodotObject gdObj || gdObj.GetScript().Obj is not GDScript gdScript)
+        if (obj is not GodotObject gdObj || gdObj?.GetScript().Obj is not GDScript gdScript)
             yield break;
 
         var propertyList = gdScript.GetScriptPropertyList();

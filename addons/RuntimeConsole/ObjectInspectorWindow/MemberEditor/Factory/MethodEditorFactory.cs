@@ -27,23 +27,7 @@ public static class MethodEditorFactory
         var args = methodInfo["args"].AsGodotArray<Godot.Collections.Dictionary>();
         foreach (var arg in args)
         {
-            var className = arg["class_name"].AsString();
-            var type = arg["type"].As<Variant.Type>();
-            var usage = arg["usage"].AsInt64();
-            var nativeType = VariantUtility.GetNativeType(type);
-
-            if (type == Variant.Type.Object && !string.IsNullOrEmpty(className))
-            {
-                argsType.Add(ClassDB.Instantiate(className).Obj?.GetType() ?? typeof(GodotObject));
-            }
-            else if (nativeType == null && (usage & (long)PropertyUsageFlags.NilIsVariant) != 0)
-            {
-                argsType.Add(typeof(Variant));
-            }
-            else
-            {
-                argsType.Add(nativeType);
-            }
+            argsType.Add(GDScriptUtility.GetPropertyNativeType(arg));
         }
         var returnValue = methodInfo["return"].AsGodotDictionary();
         var returnType = returnValue["type"].As<Variant.Type>();

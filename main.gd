@@ -1,43 +1,37 @@
+@warning_ignore_start("unused_parameter")
+@warning_ignore_start("unused_signal")
 class_name Main
 extends Control
 
-enum MyEnum {
-    ONE,
-    TWO = 1,
-    THREE = 1
+enum Test
+{
+	TEST_1,
+	TEST_2,
+	TEST_3
 }
+signal test_signal(a, b, c)
+signal test_signal_2(a:Array[int], b:int, c:Dictionary[String, Test])
+class Item:
+	var a:int = 0
+	var b:String = ""
 
-var my_value
-var arr = [[1, 2, 3], [4, 5, 6]]
-@export var errors :Array[Error]= [Error.OK, Error.FAILED, Error.ERR_CANT_OPEN]
-@export var my_int_enum: Array[MyEnum] = [MyEnum.ONE, MyEnum.TWO, MyEnum.THREE]
-@export_flags("ONE:2","TWO:4","THREE:6") var my_enum:Array[int] = [MyEnum.ONE, MyEnum.TWO, MyEnum.THREE]
-var color_arr:Array[Color] = [Color.RED, Color.ALICE_BLUE]
-var a = 10
-var b = 3.14
-var c = "Hello"
-var d := true
-var e : Array[int] = [1, 2, 3]
-var pckArr = PackedInt64Array([1, 2, 3])
-@export var enumDict : Dictionary[MyEnum, Error] = {MyEnum.ONE: Error.OK, MyEnum.TWO: Error.FAILED}
-var item = Item.new()
-@export var error : Error
-var variant
 
-class Item extends Resource:
-    @export var name = "Item"
-    @export var id = 0     
+func _ready():
+	test_signal.connect(foo)
+	test_signal_2.connect(foo)
+	pass
 
-func _ready():        
-    print(enumDict)
-    pass
-
-func print_new_item() -> Item:
-    print(Item.new())
-    return Item.new()
+func _process(delta):
+	if Input.is_action_just_pressed("ui_accept"):
+		emit_signal("test_signal", 1, 2, 3)
+func sum(arr: Array[Error]) -> int:
+	var sum:int = 0
+	for i in arr:
+		sum += i
+	return sum
 
 func foo(a, b, c):
-    prints(a, b, c)
+	prints(a, b, c)
 
 func add(a: int, b: int) -> int:
-    return a + b
+	return a + b

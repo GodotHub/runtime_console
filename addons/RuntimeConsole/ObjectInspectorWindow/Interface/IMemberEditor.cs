@@ -6,8 +6,7 @@ public enum MemberEditorType
     Property,
     Field,
     Method,
-    Event,
-    Constant
+    Event
 }
 public interface IMemberEditor
 {

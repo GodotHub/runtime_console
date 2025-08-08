@@ -9,7 +9,7 @@ namespace RuntimeConsole;
 
 public class EventProvider : IObjectMemberProvider
 {
-    public IEnumerable<IMemberEditor> Populate(object obj, params object[] context)
+    public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
         var objType = obj.GetType();
         var events = objType.GetEvents();
@@ -18,6 +18,7 @@ public class EventProvider : IObjectMemberProvider
         if (gdObj != null)
         {
             signalList = gdObj.GetSignalList();
+            GD.Print(signalList);
         }
         foreach (var eventInfo in events)
         {
@@ -51,8 +52,9 @@ public class EventProvider : IObjectMemberProvider
                         eventName = attr.FieldName;
                     }
                     // 获取事件对应的委托字段
-                        var fieldInfo = objType.GetField(eventName,
+                    var fieldInfo = objType.GetField(eventName,
                         BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+
                     if (fieldInfo != null)
                     {
                         var handler = fieldInfo.GetValue(obj) as Delegate;

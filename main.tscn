@@ -19,10 +19,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_h2yge")
-enumDict = Dictionary[int, int]({
-0: 0,
-1: 0
-})
 
 [node name="nihao" type="Node2D" parent="."]
 

@@ -85,6 +85,76 @@ public static class EventEditorFactory
         return editor;
     }
 
+    public static EventEditor Create(GodotObject gdObj, Godot.Collections.Dictionary signalInfo, Godot.Collections.Array<Godot.Collections.Dictionary> connectList)
+    {
+        var editor = _editorScene.Instantiate<EventEditor>();
+        /* 
+        { 
+            "name": "test_signal", 
+            "args": [
+                { 
+                    "name": "a", 
+                    "class_name": &"", 
+                    "type": 0, 
+                    "hint": 0, 
+                    "hint_string": "", 
+                    "usage": 131072 
+                }, 
+                { 
+                    "name": "b", 
+                    "class_name": &"", 
+                    "type": 0, 
+                    "hint": 0, 
+                    "hint_string": "", 
+                    "usage": 131072 
+                },
+                { 
+                    "name": "c", 
+                    "class_name": &"", 
+                    "type": 0, 
+                    "hint": 0, 
+                    "hint_string": "", 
+                    "usage": 131072 
+                }
+            ], 
+            "default_args": [], 
+            "flags": 1, 
+            "id": 0, 
+            "return": { "name": "", "class_name": &"", "type": 0, "hint": 0, "hint_string": "", "usage": 6 } }
+        */
+        var name = signalInfo["name"].AsString();
+        Dictionary<string, Type> argsType = [];
+
+        var args = signalInfo["args"].AsGodotArray<Godot.Collections.Dictionary>();
+        foreach (var arg in args)
+        {
+            argsType.Add(arg["name"].AsString(), GDScriptUtility.GetPropertyNativeType(arg));
+        }
+        string signature = $"{name}({string.Join(", ", argsType.Select(p => $"{p.Value.Name} {p.Key}"))})";
+        editor.SetMemberInfo(name, signature, argsType.Values.ToArray());
+
+        var listeners = new Dictionary<string, (object, object)>();
+        foreach (var (callable, original) in GetSignalCallablesExcludingMiddleman(gdObj, name, connectList))
+        {
+            string key;
+
+           if (callable.Target != null && callable.Method != null)
+            {
+                key = $"{callable.Target.GetType().Name}::{callable.Method}";
+                listeners[key] = (callable.Target, callable);
+            }
+            else
+            {
+                // 内部绑定（如 NativeClass::method_name）原样保留
+                key = original;
+                listeners[key] = (null, null);
+            }
+        }
+
+        editor.SetListeners(listeners);
+        return editor;
+    }
+
     private static string FormatListenerKey(object target, MethodInfo method)
         => $"{target?.GetType().Name ?? "Static"}::{method?.Name ?? "Unknown"}";
 

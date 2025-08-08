@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 namespace RuntimeConsole;
 
 public class GDScriptMethodProvider : IObjectMemberProvider
 {
-    public IEnumerable<IMemberEditor> Populate(object obj, params object[] context)
+    public IEnumerable<IMemberEditor> Populate(object obj, params object[] _)
     {
         if (obj is not GodotObject gdObj || gdObj.GetScript().Obj is not GDScript gdScript)
             yield break;
 
         var list = gdScript.GetScriptMethodList();
-        GD.Print(list);
+        
         foreach (var method in list)
         {
             var editor = MethodEditorFactory.Create(method);

@@ -24,6 +24,54 @@ public static class VariantUtility
         }
     }
 
+    /// <summary>
+    /// 根据hint中的类型提示字符串获取对应的C#类型
+    /// </summary>
+    /// <param name="hint">属性元数据的hint提示字符串</param>
+    /// <returns>匹配除Variant以外的所有Godot类型，默认返回int，指示属性是一个枚举，因为字符串Variant不可能出现在hint字符串中</returns>
+    public static Type GetNativeType(string hint) => hint switch
+    {
+        "bool" => typeof(bool),
+        "int" => typeof(long),
+        "float" => typeof(double),
+        "String" => typeof(string),
+        "Vector2" => typeof(Vector2),
+        "Vector2i" => typeof(Vector2I),
+        "Rect2" => typeof(Rect2),
+        "Rect2i" => typeof(Rect2I),
+        "Vector3" => typeof(Vector3),
+        "Vector3i" => typeof(Vector3I),
+        "Transform2D" => typeof(Transform2D),
+        "Vector4" => typeof(Vector4),
+        "Vector4i" => typeof(Vector4I),
+        "Plane" => typeof(Plane),
+        "Quaternion" => typeof(Quaternion),
+        "AABB" => typeof(Aabb),
+        "Basis" => typeof(Basis),
+        "Transform3D" => typeof(Transform3D),
+        "Projection" => typeof(Projection),
+        "Color" => typeof(Color),
+        "StringName" => typeof(StringName),
+        "NodePath" => typeof(NodePath),
+        "RID" => typeof(Rid),
+        "Object" => typeof(GodotObject),
+        "Callable" => typeof(Callable),
+        "Signal" => typeof(Signal),
+        "Dictionary" => typeof(Godot.Collections.Dictionary),
+        "Array" => typeof(Godot.Collections.Array),
+        "PackedByteArray" => typeof(byte[]),
+        "PackedInt32Array" => typeof(int[]),
+        "PackedInt64Array" => typeof(long[]),
+        "PackedFloat32Array" => typeof(float[]),
+        "PackedFloat64Array" => typeof(double[]),
+        "PackedStringArray" => typeof(string[]),
+        "PackedVector2Array" => typeof(Vector2[]),
+        "PackedVector3Array" => typeof(Vector3[]),
+        "PackedColorArray" => typeof(Color[]),
+        "PackedVector4Array" => typeof(Vector4[]),
+        _ => Type.GetType(hint, false) ?? typeof(long) // hint中没有Variant这个类型提示，其他情况默认为整数（识别为枚举）
+    };
+
     public static Type GetNativeType(Variant.Type type) => type switch
     {
         Variant.Type.Bool => typeof(bool),
