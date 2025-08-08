@@ -25,7 +25,7 @@ Freely extend console feature windows
 
 - [x] Improve log window command customization
 
-- [ ] Improve object inspector UI, support editing properties and calling methods at runtime
+- [x] Improve object inspector UI, support editing properties and calling methods at runtime
 
 - [ ] Add runtime script editor, support adding or modifying object scripts at runtime (GDScript only)
 
