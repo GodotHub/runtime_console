@@ -59,7 +59,10 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 6
+size_flags_vertical = 6
 horizontal_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
 
 [node name="SelectedObjects" type="TabContainer" parent="Panel/VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true

@@ -8,6 +8,7 @@ namespace RuntimeConsole;
 
 public partial class ObjectInspectorWindow : Window
 {
+
     private ObjectTreeWindow _objTree;
     private Label _objName;
     private Label _objRID;
@@ -16,8 +17,11 @@ public partial class ObjectInspectorWindow : Window
     private Button _pinButton;
     private static readonly PackedScene _memberPanel = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/ObjectMemberPanel.tscn");
     private readonly Stack<object> _selectedObjects = [];
+    private Callable _clearObjectsCallable;
+
     public override void _Ready()
     {
+        _clearObjectsCallable = new Callable(this, MethodName.ClearObjects);
         Size = (Vector2I)GetTree().Root.GetViewport().GetVisibleRect().Size / 2;
 
         _objTree = Console.GameConsole.GetConsoleWindow<ObjectTreeWindow>("Object Tree");
@@ -61,6 +65,12 @@ public partial class ObjectInspectorWindow : Window
         {
             for (int i = _selectedObjectsContainer.GetTabCount() - 1; i > tabIdx; i--)
             {
+                if (_selectedObjects.Count > 0 && IsObjectInvalid(_selectedObjects.Peek()))
+                {
+                    _selectedObjectsContainer.GetChild(i).QueueFree();
+                    _selectedObjects.Pop();
+                    continue;
+                }
                 _selectedObjectsContainer.GetChild(i).QueueFree();
                 _selectedObjects.Pop();
                 SetTitle(_selectedObjects.Peek(), _selectedObjectsContainer.GetTabTitle(i - 1));
@@ -68,9 +78,25 @@ public partial class ObjectInspectorWindow : Window
         }
     }
 
+    private bool IsObjectInvalid(object obj)
+    {
+        if (obj == null)
+            return true;
+
+        if (obj is Node node && !IsInstanceValid(node))
+            return true;
+
+        return false;
+    }
+
+
     private async void OnNodeSelected(Node node)
     {
         ClearObjects();
+        
+        if (!node.IsConnected(Node.SignalName.TreeExiting, _clearObjectsCallable))
+            node.Connect(Node.SignalName.TreeExiting, _clearObjectsCallable);
+
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         ShowNodeMembers(node, string.Empty, node.Name);
     }
@@ -121,9 +147,9 @@ public partial class ObjectInspectorWindow : Window
 
     private void SetTitle(object obj, string displayText)
     {
-        if (obj == null)
+        if (IsObjectInvalid(obj))
         {
-            _objName.Text = "null";
+            _objName.Text = "[Released object]";
             _objRID.Text = "<null>";
             return;
         }
@@ -173,7 +199,17 @@ public partial class ObjectInspectorWindow : Window
 
     private void OnRefreshRequested(ObjectMemberPanel panel)
     {
+        if (_selectedObjects.Count == 0) return;
+        
         var currentObj = _selectedObjects.Peek();
+        
+        if (IsObjectInvalid(currentObj))
+        {
+            _selectedObjects.Pop();
+            panel.QueueFree();
+            return;
+        }
+
         var context = panel.Context;
 
         panel.SetObject(currentObj,
@@ -187,8 +223,9 @@ public partial class ObjectInspectorWindow : Window
             new EventProvider()
         );
 
-        SetTitle(currentObj, panel.Name);
+        SetTitle(IsObjectInvalid(currentObj) ? null : currentObj, panel.Name);
     }
+
 
     // 显示Node成员
     private void ShowNodeMembers(Node node, string parentMember, string displayText)
@@ -204,7 +241,8 @@ public partial class ObjectInspectorWindow : Window
         {
             child.QueueFree();
         }
-        
+        _objName.Text = "Please select an object from the object tree.";
+        _objRID.Text = "";
         _selectedObjects.Clear();
     }
 }

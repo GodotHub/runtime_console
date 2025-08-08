@@ -50,17 +50,20 @@ public partial class ObjectTreeWindow : Window
     {
         _tree.Clear();
         var rootNode = GetTree().Root;
-        var rootItem = _tree.CreateItem();
 
+        if (!IsNodeValid(rootNode)) return;
+
+        var rootItem = _tree.CreateItem();
         SetItemContent(rootItem, 0, rootNode, GetIcon(rootNode));
         CreateChildItem(rootNode, rootItem);
         _searchBox.SetRoot(_tree.GetRoot());
+        _tree.Visible = true;
     }
 
-    private void CreateChildItem(Node rootNode, TreeItem parent)
+    private void CreateChildItem(Node parentNode, TreeItem parent)
     {
 
-        foreach (var child in rootNode.GetChildren())
+        foreach (var child in parentNode.GetChildren().Cast<Node>().Where(IsNodeValid))
         {
             if (IsHiddenInTree(child))
                 continue;
@@ -70,7 +73,10 @@ public partial class ObjectTreeWindow : Window
             CreateChildItem(child, item);
         }
     }
-
+    private bool IsNodeValid(Node node)
+    {
+        return node != null && IsInstanceValid(node);
+    }
     private void SetItemContent(TreeItem item, int column, Node meta, Texture2D icon)
     {
         item.SetMetadata(column, meta);
@@ -125,6 +131,11 @@ public partial class ObjectTreeWindow : Window
         if (meta != null)
         {
             EmitSignalNodeSelected(meta);
+        }
+        else
+        {
+            _tree.Visible = false;
+            CallDeferred(MethodName.FillObjectTree);            
         }
     }
 
