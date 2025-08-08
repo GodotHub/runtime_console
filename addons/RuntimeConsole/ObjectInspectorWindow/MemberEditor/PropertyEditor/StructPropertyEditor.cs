@@ -47,6 +47,9 @@ public partial class StructPropertyEditor : PropertyGroupEditor, IExpendObjectRe
     public void OnPanelCreated(ObjectMemberPanel panel)
     {
         _childProperties.Clear();
+        panel.ShowMethod(false);
+        panel.ShowEvent(false);
+        panel.ShowElement(false);
 
         foreach (var prop in panel.GetProperties())
         {

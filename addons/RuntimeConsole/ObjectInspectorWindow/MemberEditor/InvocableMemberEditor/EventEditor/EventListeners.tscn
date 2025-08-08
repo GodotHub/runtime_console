@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkkjwm2r1qgew"]
+
+[ext_resource type="Script" uid="uid://mmqhyai3tcw4" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/EventEditor/EventListeners.cs" id="1_8ln3r"]
+
+[node name="EventListeners" type="PopupPanel"]
+title = "Event Listeners"
+initial_position = 2
+size = Vector2i(345, 495)
+visible = true
+unresizable = false
+borderless = false
+script = ExtResource("1_8ln3r")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 341.0
+offset_bottom = 491.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EmptyLabel" type="Label" parent="PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Empty"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="SignatureLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Event"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ListenersContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

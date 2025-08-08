@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dbmnmwke23pq1"]
 
-[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_10vsn"]
-[ext_resource type="Script" uid="uid://d4wr6l6byp7d" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.cs" id="2_gh8xa"]
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/Base/PropertyEditor.tscn" id="1_10vsn"]
+[ext_resource type="Script" uid="uid://d4wr6l6byp7d" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/StringPropertyEditor.cs" id="2_gh8xa"]
 
 [node name="StringPropertyEditor" instance=ExtResource("1_10vsn")]
 offset_right = 396.0

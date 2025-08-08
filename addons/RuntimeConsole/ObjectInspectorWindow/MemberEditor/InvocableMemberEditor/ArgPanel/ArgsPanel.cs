@@ -7,11 +7,12 @@ public partial class ArgsPanel : PopupPanel
 {
     private VBoxContainer _argsList;
     private Button _invokeMethodButton;
+    private Label _signatureLabel;
     private int _argsCount;
     private int _genericArgsCont;
-    public event Action<object[]> MethodInvoked;
+    public event Action<object[]> Invoked;
 
-    private PackedScene _argValueEditor = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/ArgValueEditor.tscn");
+    private PackedScene _argValueEditor = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/ArgPanel/ArgValueEditor.tscn");
 
     public override void _Notification(int what)
     {
@@ -25,12 +26,14 @@ public partial class ArgsPanel : PopupPanel
     {
         _argsList = GetNode<VBoxContainer>("%ArgsList");
         _invokeMethodButton = GetNode<Button>("%InvokeMethod");
+        _signatureLabel = GetNode<Label>("%SignatureLabel");
 
         _invokeMethodButton.Pressed += OnInvokeMethodPressed;
     }
 
-    public void SetArgs(int genericArgsCount, params Type[] argTypes)
+    public void SetArgs(string signature, int genericArgsCount, Type[] argTypes)
     {
+        _signatureLabel.Text = signature;
         _argsCount = argTypes.Length;
         _genericArgsCont = genericArgsCount;
         foreach (var child in _argsList.GetChildren())
@@ -64,7 +67,7 @@ public partial class ArgsPanel : PopupPanel
             args[i] = editor.GetValue();
         }
 
-        MethodInvoked?.Invoke(args);
+        Invoked?.Invoke(args);
         
             
     }

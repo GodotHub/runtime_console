@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cj17q0vkyjfbd"]
 
-[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_6og6q"]
-[ext_resource type="Script" uid="uid://bydsfft5q8crq" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ColorPropertyEditor.cs" id="2_h5cvk"]
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/Base/PropertyEditor.tscn" id="1_6og6q"]
+[ext_resource type="Script" uid="uid://bydsfft5q8crq" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/ColorPropertyEditor.cs" id="2_h5cvk"]
 
 [node name="ColorPropertyEdotor" instance=ExtResource("1_6og6q")]
 offset_right = 589.0

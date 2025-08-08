@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://qguyoqx710nd"]
 
-[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_jnwpa"]
-[ext_resource type="Script" uid="uid://crx2s1xvevftr" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CharPropertyEditor.cs" id="2_mclfr"]
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/Base/PropertyEditor.tscn" id="1_jnwpa"]
+[ext_resource type="Script" uid="uid://crx2s1xvevftr" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/CharPropertyEditor.cs" id="2_mclfr"]
 
 [node name="PropertyEditor" instance=ExtResource("1_jnwpa")]
 script = ExtResource("2_mclfr")

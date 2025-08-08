@@ -66,7 +66,7 @@ public partial class ArgValueEditor : HBoxContainer
             {
                 if (Clipboard.Instance.TryGetValue(index, out var value))
                 {
-                    if (value.GetType() == _argType || _argType == typeof(Variant))
+                    if (value.GetType() == _argType || _argType == typeof(Variant) || _argType.IsAssignableFrom(value.GetType()))
                     {
                         return value;
                     }
@@ -79,13 +79,28 @@ public partial class ArgValueEditor : HBoxContainer
     
             }
         }
+        if (string.IsNullOrEmpty(input))
+            throw new ArgumentException("Failed parse input! Input is empty!");
+        
         // 使用 Convert.ChangeType 进行通用类型转换
         try
         {
-            if (!string.IsNullOrEmpty(input))
+            
+            if (_argType.IsEnum)
             {
-                return Convert.ChangeType(input, _argType);
+                // 如果是数字，则使用 Enum.ToObject 转换
+                if (long.TryParse(input, out var numericValue))
+                {
+                    return Enum.ToObject(_argType, numericValue);
+                }
+                // 否则按名称解析
+                else
+                {
+                    return Enum.Parse(_argType, input, true);
+                }
             }
+            return Convert.ChangeType(input, _argType);
+            
         }
         catch (Exception)
         {
@@ -118,10 +133,9 @@ public partial class ArgValueEditor : HBoxContainer
             {
                 // 忽略异常，继续抛出原始异常
             }
-            
+
             throw;
         }
 
-        throw new ArgumentException("Failed parse input!");
     }
 }

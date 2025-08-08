@@ -120,8 +120,14 @@ public partial class ObjectMemberPanel : TabContainer
                         break;
                     case MemberEditorType.Method:
                         var methodEditor = (MethodEditor)control;
-                        
+
                         AddMethod(methodEditor);
+                        break;
+
+                    case MemberEditorType.Event:
+                        var eventEditor = (EventEditor)control;
+
+                        AddEvent(eventEditor);
                         break;
                 }
                 await ToSignal(sceneTree, SceneTree.SignalName.ProcessFrame);
@@ -195,7 +201,7 @@ public partial class ObjectMemberPanel : TabContainer
     /// 显示或隐藏信号面板
     /// </summary>
     /// <param name="show">是否显示</param>
-    public void ShowSignal(bool show)
+    public void ShowEvent(bool show)
     {
         ShowMemberPanel(_signal, show);
     }
@@ -238,6 +244,11 @@ public partial class ObjectMemberPanel : TabContainer
     public void AddMethod(MethodEditor editor)
     {
         _methodBox.AddChild(editor);
+    }
+
+    public void AddEvent(EventEditor editor)
+    {
+        _signalBox.AddChild(editor);
     }
 
     public IEnumerable<PropertyEditorBase> GetProperties()

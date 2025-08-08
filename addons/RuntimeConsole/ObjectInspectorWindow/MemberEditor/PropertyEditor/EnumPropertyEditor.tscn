@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://6vqxespup6df"]
 
-[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/PropertyEditor.tscn" id="1_kvbej"]
-[ext_resource type="Script" uid="uid://b4uova2yeqhp1" path="res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.cs" id="2_n7lk7"]
+[ext_resource type="PackedScene" uid="uid://dye73iyffm6f7" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/Base/PropertyEditor.tscn" id="1_kvbej"]
+[ext_resource type="Script" uid="uid://b4uova2yeqhp1" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/EnumPropertyEditor.cs" id="2_n7lk7"]
 
 [node name="EnumPropertyEditor" node_paths=PackedStringArray("_optionButton") instance=ExtResource("1_kvbej")]
 script = ExtResource("2_n7lk7")

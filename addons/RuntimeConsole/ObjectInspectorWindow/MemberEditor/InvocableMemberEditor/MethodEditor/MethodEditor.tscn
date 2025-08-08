@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bbofrwdf0yq5r"]
 
-[ext_resource type="Script" uid="uid://y5dwrjs8ajki" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/MethodEditor.cs" id="1_nsn1b"]
+[ext_resource type="Script" uid="uid://y5dwrjs8ajki" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/MethodEditor/MethodEditor.cs" id="1_nsn1b"]
 
 [node name="MethodEditor" type="PanelContainer"]
 offset_right = 48.0

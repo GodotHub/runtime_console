@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dpsfj0bhk64ij"]
 
-[ext_resource type="Script" uid="uid://du5irxcbvvmxl" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/ArgValueEditor.cs" id="1_xuwm8"]
+[ext_resource type="Script" uid="uid://du5irxcbvvmxl" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/ArgPanel/ArgValueEditor.cs" id="1_xuwm8"]
 
 [node name="ArgValueEditor" type="HBoxContainer"]
 script = ExtResource("1_xuwm8")

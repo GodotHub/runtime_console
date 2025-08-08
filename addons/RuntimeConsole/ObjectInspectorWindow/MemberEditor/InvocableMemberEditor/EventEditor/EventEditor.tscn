@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwf4vodnvqtsi"]
+
+[ext_resource type="Script" uid="uid://c82jn1s1ta4ju" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/EventEditor/EventEditor.cs" id="1_v81ua"]
+[ext_resource type="PackedScene" uid="uid://dkkjwm2r1qgew" path="res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/EventEditor/EventListeners.tscn" id="2_yy0qt"]
+
+[node name="EventEditor" type="PanelContainer"]
+offset_right = 748.0
+offset_bottom = 31.0
+script = ExtResource("1_v81ua")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="EventSignature" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "event  signature"
+
+[node name="ListenerButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Veiw Listeners"
+
+[node name="InvokeButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Inkove"
+
+[node name="EventListeners" parent="." instance=ExtResource("2_yy0qt")]
+unique_name_in_owner = true
+visible = false

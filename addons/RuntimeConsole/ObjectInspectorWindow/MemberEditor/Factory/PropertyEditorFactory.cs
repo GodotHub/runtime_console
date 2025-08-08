@@ -21,13 +21,13 @@ public static class PropertyEditorFactory
 
         if (propertyType == typeof(char))
         {
-            return CreateInstance<CharPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CharPropertyEditor.tscn");
+            return CreateInstance<CharPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/CharPropertyEditor.tscn");
         }
 
         // 布尔类型属性编辑器
         if (propertyType == typeof(bool))
         {
-            return CreateInstance<BoolPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/BoolPropertyEditor.tscn");
+            return CreateInstance<BoolPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/BoolPropertyEditor.tscn");
         }
 
         // 枚举类型属性编辑器
@@ -35,42 +35,42 @@ public static class PropertyEditorFactory
         {
             if (propertyType.GetCustomAttribute<FlagsAttribute>() != null)
             {
-                return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/FlagPropertyEditor.tscn");
+                return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/FlagPropertyEditor.tscn");
             }
             else
             {
-                return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+                return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/EnumPropertyEditor.tscn");
             }
         }
 
         // 数值类型属性编辑器
         if (IsNumericType(propertyType))
         {
-            return CreateInstance<NumberPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/NumberPropertyEditor.tscn");
+            return CreateInstance<NumberPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/NumberPropertyEditor.tscn");
         }
 
         // 字符串类型属性编辑器
         if (propertyType == typeof(string) || propertyType == typeof(StringName) || propertyType == typeof(NodePath))
         {
-            return CreateInstance<StringPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StringPropertyEditor.tscn");
+            return CreateInstance<StringPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/StringPropertyEditor.tscn");
         }
 
         // 颜色编辑器
         if (propertyType == typeof(Color))
         {
-            return CreateInstance<ColorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ColorPropertyEditor.tscn");
+            return CreateInstance<ColorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/ColorPropertyEditor.tscn");
         }
 
         // 向量/矩阵编辑器
         if (IsVectorType(propertyType))
         {
-            return CreateInstance<VectorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/VectorPropertyEditor.tscn");
+            return CreateInstance<VectorPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/VectorPropertyEditor.tscn");
         }
 
         // 集合类型
         if (typeof(IEnumerable).IsAssignableFrom(propertyType))
         {
-            return CreateInstance<CollectionPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/CollectionPropertyEditor.tscn");
+            return CreateInstance<CollectionPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/CollectionPropertyEditor.tscn");
         }        
 
         if (propertyType == typeof(Variant))
@@ -82,24 +82,24 @@ public static class PropertyEditorFactory
         // 通用值类型编辑器
         if (propertyType.IsValueType)
         {
-            return CreateInstance<StructPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/StructPropertyEditor.tscn");
+            return CreateInstance<StructPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/StructPropertyEditor.tscn");
         }
         
 
         // 默认使用对象属性编辑器
-        return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/ObjectPropertyEditor.tscn");
+        return CreateInstance<ObjectPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/ObjectPropertyEditor.tscn");
     }
 
     public static PropertyEditorBase CreateEnumEditorForGDScript(PropertyHint hint)
     {
         if (hint == PropertyHint.Enum)
         {
-            return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/EnumPropertyEditor.tscn");
+            return CreateInstance<EnumPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/EnumPropertyEditor.tscn");
         }
 
         if (hint == PropertyHint.Flags)
         {
-            return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/PropertyEditor/FlagPropertyEditor.tscn");
+            return CreateInstance<FlagPropertyEditor>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/PropertyEditor/FlagPropertyEditor.tscn");
         }
 
         throw new ArgumentException($"Invalid hint: {hint}, Expected: Enum or Flags");

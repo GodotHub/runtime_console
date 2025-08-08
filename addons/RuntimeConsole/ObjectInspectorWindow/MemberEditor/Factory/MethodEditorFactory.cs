@@ -8,13 +8,13 @@ namespace RuntimeConsole;
 
 public static class MethodEditorFactory
 {
-    private static readonly PackedScene _methodEditorScene = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/MethodEditor/MethodEditor.tscn");
+    private static readonly PackedScene _methodEditorScene = ResourceLoader.Load<PackedScene>("res://addons/RuntimeConsole/ObjectInspectorWindow/MemberEditor/InvocableMemberEditor/MethodEditor/MethodEditor.tscn");
     public static MethodEditor Create(MethodInfo methodInfo)
     {
         var editor = _methodEditorScene.Instantiate<MethodEditor>();
         var parameterTypes = methodInfo.GetParameters().Select(p => p.ParameterType).ToArray();
         var genericArgsCount = methodInfo.IsGenericMethodDefinition ? methodInfo.GetGenericArguments().Length : 0;
-        editor.SetMethodInfo(methodInfo.Name, methodInfo.ToString(), parameterTypes, genericArgsCount);
+        editor.SetMemberInfo(methodInfo.Name, methodInfo.ToString(), parameterTypes, genericArgsCount);
         return editor;
     }
 
@@ -54,7 +54,7 @@ public static class MethodEditorFactory
         
         int genericArgsCount = 0;
         
-        editor.SetMethodInfo(name, signature, argsType.ToArray(), genericArgsCount);
+        editor.SetMemberInfo(name, signature, argsType.ToArray(), genericArgsCount);
         return editor;
     }
 
