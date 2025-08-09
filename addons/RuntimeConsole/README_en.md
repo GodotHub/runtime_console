@@ -17,18 +17,6 @@ Execute commands at runtime
 
 Freely extend console feature windows
 
-## Roadmap
-
-- [x] Freely extend console feature windows, support for adding custom feature windows
-
-- [x] Improve log window, support log category filtering
-
-- [x] Improve log window command customization
-
-- [ ] Improve object inspector UI, support editing properties and calling methods at runtime
-
-- [ ] Add runtime script editor, support adding or modifying object scripts at runtime (GDScript only)
-
 ## Requirements
 
 - [Godot .NET 4.4+](https://godotengine.org/download/windows/)
